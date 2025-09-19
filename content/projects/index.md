@@ -3,8 +3,6 @@ title: Projects
 template: page
 ---
 
-# Projects
-
 A comprehensive collection of hardware engineering, prototyping, and research projects organized chronologically and by domain.
 
 ## Cornell University Projects (Academic)
@@ -61,18 +59,5 @@ A comprehensive collection of hardware engineering, prototyping, and research pr
 - **[POCIS Development](/projects/__3.9___pocis/)** - Passive sampling devices
 - **[Dolor Sit Amet](/projects/dolor%20sit%20amet/)** - Special research project
 
-## Patents & Intellectual Property
-
-Currently holding **1 awarded patent** with **4 additional patents filed** across different engineering fields:
-- [Modular system for upstream wastewater sampling](https://patents.google.com/patent/US20200072709A1/) - Device Development project
-- Additional patents in fluid mechanics, sensor technology, and manufacturing
-
-## Technical Documentation
-
-Projects include comprehensive documentation:
-- CAD models and technical drawings
-- Research papers and academic publications
-- Video demonstrations and assembly instructions
-- Performance data and testing results
 
 For additional projects and open-source work, visit my [GitHub](https://github.com/nikhilblal).
