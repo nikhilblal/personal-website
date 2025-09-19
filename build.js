@@ -119,6 +119,12 @@ async function copyDirectory(src, dest) {
     if (entry.isDirectory()) {
       await copyDirectory(srcPath, destPath);
     } else {
+      // Skip large video files to reduce build size
+      const ext = path.extname(entry.name).toLowerCase();
+      if (['.mp4', '.mov', '.avi', '.wmv'].includes(ext)) {
+        console.log(`Skipping large video file: ${srcPath}`);
+        return;
+      }
       await fs.copyFile(srcPath, destPath);
     }
   }
@@ -159,6 +165,12 @@ async function processMarkdownFile(filePath, contentDir, distDir) {
       try {
         const stat = await fs.stat(srcAsset);
         if (stat.isFile()) {
+          // Skip large video files to reduce build size
+          const ext = path.extname(file).toLowerCase();
+          if (['.mp4', '.mov', '.avi', '.wmv'].includes(ext)) {
+            console.log(`Skipping large video file: ${srcAsset}`);
+            continue;
+          }
           await fs.copyFile(srcAsset, destAsset);
         }
       } catch (err) {
