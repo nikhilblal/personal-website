@@ -1,1 +1,0 @@
-Testing GitHub profile picture display with correct email.
