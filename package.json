@@ -9,10 +9,13 @@
     "serve": "python3 -m http.server 8000 -d dist"
   },
   "dependencies": {
-    "markdown-it": "^14.0.0",
-    "gray-matter": "^4.0.3",
+    "chokidar": "^3.6.0",
     "eta": "^3.4.0",
-    "chokidar": "^3.6.0"
+    "gray-matter": "^4.0.3",
+    "markdown-it": "^14.0.0"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "sharp": "^0.34.4"
+  }
 }

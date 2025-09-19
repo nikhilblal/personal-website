@@ -5,6 +5,7 @@ import MarkdownIt from 'markdown-it';
 import matter from 'gray-matter';
 import { Eta } from 'eta';
 import chokidar from 'chokidar';
+import sharp from 'sharp';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -85,6 +86,32 @@ async function ensureDir(dir) {
   }
 }
 
+async function optimizeImage(srcPath, destPath) {
+  const ext = path.extname(srcPath).toLowerCase();
+
+  try {
+    if (['.jpg', '.jpeg', '.png'].includes(ext)) {
+      // Optimize images - resize to max 1200px width, compress to ~80% quality
+      await sharp(srcPath)
+        .resize(1200, null, {
+          withoutEnlargement: true,
+          fit: 'inside'
+        })
+        .jpeg({ quality: 80 })
+        .png({ compressionLevel: 8 })
+        .toFile(destPath);
+
+      console.log(`Optimized image: ${path.basename(srcPath)}`);
+    } else {
+      // Copy non-image files as-is
+      await fs.copyFile(srcPath, destPath);
+    }
+  } catch (err) {
+    console.log(`Failed to optimize ${srcPath}, copying as-is:`, err.message);
+    await fs.copyFile(srcPath, destPath);
+  }
+}
+
 async function copyAssets() {
   const srcDir = path.join(__dirname, 'src');
   const distDir = path.join(__dirname, 'dist');
@@ -97,7 +124,7 @@ async function copyAssets() {
 
       const stat = await fs.stat(srcPath);
       if (stat.isFile()) {
-        await fs.copyFile(srcPath, distPath);
+        await optimizeImage(srcPath, distPath);
       } else if (stat.isDirectory() && file === 'assets') {
         // Copy all assets recursively
         await copyDirectory(srcPath, path.join(distDir, 'assets'));
@@ -125,7 +152,7 @@ async function copyDirectory(src, dest) {
         console.log(`Skipping large video file: ${srcPath}`);
         return;
       }
-      await fs.copyFile(srcPath, destPath);
+      await optimizeImage(srcPath, destPath);
     }
   }
 }
@@ -171,7 +198,7 @@ async function processMarkdownFile(filePath, contentDir, distDir) {
             console.log(`Skipping large video file: ${srcAsset}`);
             continue;
           }
-          await fs.copyFile(srcAsset, destAsset);
+          await optimizeImage(srcAsset, destAsset);
         }
       } catch (err) {
         // File might not exist or be inaccessible
@@ -656,7 +683,7 @@ async function build(isWatchMode = false) {
         for (const file of files) {
           if (!file.name.endsWith('.md') && file.isFile()) {
             await ensureDir(projectAssetDir);
-            await fs.copyFile(
+            await optimizeImage(
               path.join(projectDir, file.name),
               path.join(projectAssetDir, file.name)
             );
