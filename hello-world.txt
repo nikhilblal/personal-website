@@ -1,0 +1,3 @@
+Hello World!
+
+This is a test commit to verify proper git credentials.
