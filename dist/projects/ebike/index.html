@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stealthy electric city bike</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="home-link">Portfolio</a>
+            <div class="nav-links">
+                <a href="/about/">About</a>
+                <a href="/projects/">Projects</a>
+                <a href="/articles/">Articles</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <article>
+            <header>
+                <h1>Stealthy electric city bike</h1>
+                            </header>
+            <div class="content">
+                <p><img src="ebike4.JPEG" alt=""></p>
+<div class="video-embed">
+      <iframe
+        src="https://www.youtube.com/embed/fR6uySCIAOo"
+        frameborder="0"
+        allowfullscreen>
+      </iframe>
+    </div>
+<p><em>Demo of e-bike near Greentown Labs, super fun ride!</em></p>
+<h2>Summary</h2>
+<p>As any good MechE would do, I built myself an e-bike. But instead of sticking with the classic mainstays of cheap, unused bike with an assortment of electrical fixtures. I pursued a stealth build that required a bit of custom fabrication to get just right. The bike uses a small 16s1p, 60V nominal, 3Ah LiPo battery pack, an Infineon controller with the MOSFETs replaced with authentic <a href="https://www.infineon.com/dgdl/irfb4110pbf.pdf?fileId=5546d462533600a401535615a9571e0b">IRFB4110s</a>, and a Cycle Analyst V2 computer. Assuming a generous engineering safety factor, I limited peak power to 1500w (25A@60V) for initial tests, nothing has melted yet, but just to be safe I’ve dialed it down to 18A peak for daily use. The design was unconventionally optimized for high voltage but, relative to most high power Electrified bicycle designs, low current draw due to the limitation that the motor and motor wiring expect only 10A continuous.</p>
+<table>
+<thead>
+<tr>
+<th>Parameters</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Max Speed</td>
+<td>25MPH</td>
+</tr>
+<tr>
+<td>Distance</td>
+<td>7mi</td>
+</tr>
+<tr>
+<td>Acceleration</td>
+<td>0-25MPH, 10s with pedaling</td>
+</tr>
+<tr>
+<td>Max Current</td>
+<td>18A</td>
+</tr>
+<tr>
+<td>Max Voltage</td>
+<td>66V</td>
+</tr>
+</tbody>
+</table>
+<h2>Photos</h2>
+<p><img src="IMG_2064.JPEG" alt="">
+<em>Fig. 1: Custom wheel built to house the smallest hub motor available on the market, rated for 350w.</em></p>
+<p><img src="IMG_2065.JPEG" alt="">
+<em>Fig. 2: Completed wheel on truing stand in the Skul space in Artisan’s Asylum, double cross spoke pattern</em></p>
+<p><img src="IMG_2109.JPEG" alt="">
+<em>Fig. 3: Machining disc brake caliper bracket as the hub was significantly wider than the original hub. Milling down bolt attach points enabled me to move the caliper 0.15&quot; outwards from the center plane.</em></p>
+<p><img src="IMG_2110.JPEG" alt="">
+<em>Fig. 4: Custom spacers were turned on the lathe to get proper chain alignment on a 7-speed freewheel hub that I converted to a single speed freewheel.</em></p>
+<p><img src="IMG_4740C.jpeg" alt="">
+<em>Fig. 5: Completed bicycle after test ride</em></p>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2025</p>
+    </footer>
+</body>
+</html>

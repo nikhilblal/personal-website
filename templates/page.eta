@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= it.title %></title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="home-link">Portfolio</a>
+            <div class="nav-links">
+                <a href="/about/">About</a>
+                <a href="/projects/">Projects</a>
+                <a href="/articles/">Articles</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <article>
+            <header>
+                <h1><%= it.title %></h1>
+                <% if (it.date) { %>
+                    <time datetime="<%= it.date %>"><%= new Date(it.date).toLocaleDateString() %></time>
+                <% } %>
+            </header>
+            <div class="content">
+                <%~ it.content %>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; <%= new Date().getFullYear() %></p>
+    </footer>
+</body>
+</html>

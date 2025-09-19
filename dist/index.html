@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    .grid img, .grid video { width: 100%; height: 200px; object-fit: cover; display: block; }
+    .grid a { display: block; }
+
+    .floating-window {
+      position: fixed;
+      width: 300px;
+      height: 220px;
+      background: #c0c0c0;
+      border-top: 3px solid #ffffff;
+      border-left: 3px solid #ffffff;
+      border-right: 3px solid #808080;
+      border-bottom: 3px solid #808080;
+      font-family: 'MS Sans Serif', monospace;
+      font-size: 11px;
+      z-index: 1000;
+    }
+
+    .window-header {
+      background: linear-gradient(90deg, #0a246a 0%, #a6caf0 100%);
+      color: white;
+      padding: 2px 4px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 18px;
+      cursor: move;
+    }
+
+    .window-title {
+      font-size: 11px;
+      font-family: 'MS Sans Serif', monospace;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 2px;
+    }
+
+    .window-button {
+      width: 16px;
+      height: 14px;
+      background: #c0c0c0;
+      border-top: 1px solid #ffffff;
+      border-left: 1px solid #ffffff;
+      border-right: 1px solid #808080;
+      border-bottom: 1px solid #808080;
+      font-size: 9px;
+      line-height: 12px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .window-button:active {
+      border-top: 1px solid #808080;
+      border-left: 1px solid #808080;
+      border-right: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+    }
+
+    .window-content {
+      padding: 8px;
+      height: calc(100% - 18px);
+      background: #c0c0c0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dialog-section {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+
+    .exclamation-icon {
+      width: 32px;
+      height: 32px;
+      background-image: url('https://64.media.tumblr.com/016da1fe17e4448ffe5dec8245bc6de2/a56aedd6feaabeea-69/s540x810/0396db374112ada8381638997a7b4ace003c9476.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      flex-shrink: 0;
+    }
+
+    .dialog-text {
+      font-size: 11px;
+      line-height: 1.4;
+      color: #000000;
+      font-family: 'MS Sans Serif', monospace;
+    }
+
+    .button-section {
+      margin-top: auto;
+      padding-bottom: 12px;
+    }
+
+    .button-group {
+      margin-bottom: 8px;
+    }
+
+    .button-group:last-child {
+      margin-bottom: 8px;
+    }
+
+    .button-group-label {
+      font-size: 10px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #000000;
+      font-family: 'MS Sans Serif', monospace;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .nav-button {
+      display: inline-block;
+      width: auto;
+      min-width: 60px;
+      padding: 2px 8px;
+      background: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #808080;
+      border-bottom: 2px solid #808080;
+      text-decoration: none;
+      color: black;
+      font-size: 10px;
+      font-family: 'MS Sans Serif', monospace;
+      text-align: center;
+    }
+
+    .nav-button .shortcut {
+      text-decoration: underline;
+    }
+
+    .nav-button:hover {
+      background: #e0e0e0;
+    }
+
+    .nav-button:active {
+      border-top: 2px solid #808080;
+      border-left: 2px solid #808080;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      background: #c0c0c0;
+    }
+  </style>
+  <script>
+    function playDing() {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.2);
+    }
+
+    function playButtonClick() {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // Short "doot" sound - higher pitch, very brief
+      oscillator.frequency.setValueAtTime(1200, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.005);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.05);
+    }
+
+    let windowX = 50;
+    let windowY = 50;
+    let velocityX = 1.6;
+    let velocityY = 1.2;
+    let isPaused = false;
+
+    function bounceWindow() {
+      const floatingWindow = document.querySelector('.floating-window');
+      if (!floatingWindow || isPaused) {
+        requestAnimationFrame(bounceWindow);
+        return;
+      }
+
+      const windowWidth = 300;
+      const windowHeight = 220;
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+
+      windowX += velocityX;
+      windowY += velocityY;
+
+      if (windowX <= 0 || windowX >= screenWidth - windowWidth) {
+        velocityX = -velocityX;
+      }
+      if (windowY <= 0 || windowY >= screenHeight - windowHeight) {
+        velocityY = -velocityY;
+      }
+
+      windowX = Math.max(0, Math.min(windowX, screenWidth - windowWidth));
+      windowY = Math.max(0, Math.min(windowY, screenHeight - windowHeight));
+
+      floatingWindow.style.left = windowX + 'px';
+      floatingWindow.style.top = windowY + 'px';
+
+      requestAnimationFrame(bounceWindow);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const images = document.querySelectorAll('.grid img');
+      images.forEach(img => {
+        img.addEventListener('mouseenter', playDing);
+      });
+
+      // Start bouncing animation
+      bounceWindow();
+
+      // Pause animation on hover
+      const floatingWindow = document.querySelector('.floating-window');
+      if (floatingWindow) {
+        floatingWindow.addEventListener('mouseenter', function() {
+          isPaused = true;
+        });
+
+        floatingWindow.addEventListener('mouseleave', function() {
+          isPaused = false;
+        });
+      }
+
+      // Add click sound to all navigation buttons
+      const navButtons = document.querySelectorAll('.nav-button');
+      navButtons.forEach(button => {
+        button.addEventListener('click', playButtonClick);
+      });
+
+      // Add keyboard shortcuts (direct key presses)
+      document.addEventListener('keydown', function(e) {
+        // Only trigger if not typing in an input field or textarea, and not holding modifier keys
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' ||
+            e.target.isContentEditable || e.ctrlKey || e.metaKey || e.altKey) {
+          return;
+        }
+
+        switch(e.key.toLowerCase()) {
+          case 'a':
+            e.preventDefault();
+            e.stopPropagation();
+            playButtonClick();
+            window.location.href = '/about/';
+            break;
+          case 'r':
+            e.preventDefault();
+            e.stopPropagation();
+            playButtonClick();
+            window.location.href = '/articles/';
+            break;
+          case 'p':
+            e.preventDefault();
+            e.stopPropagation();
+            playButtonClick();
+            window.location.href = '/projects/';
+            break;
+          case 't':
+            e.preventDefault();
+            e.stopPropagation();
+            playButtonClick();
+            window.open('https://patents.justia.com/inventor/nikhil-b-lal', '_blank');
+            break;
+          case 'e':
+            e.preventDefault();
+            e.stopPropagation();
+            playButtonClick();
+            window.open('https://scholar.google.com/citations?user=GLdoyI4AAAAJ', '_blank');
+            break;
+          case 'g':
+            e.preventDefault();
+            e.stopPropagation();
+            playButtonClick();
+            window.open('https://github.com/nikhilblal', '_blank');
+            break;
+        }
+      });
+
+      // Close button functionality
+      const closeBtn = document.querySelector('.close-btn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+          playButtonClick();
+          const floatingWindow = document.querySelector('.floating-window');
+          if (floatingWindow) {
+            floatingWindow.style.display = 'none';
+          }
+        });
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="grid"><a href="/projects/__3.9___pocis/"><img src="/assets/__3.9___pocis/IMG_3004.JPEG" alt="Passive sampler alternative to 'box'" loading="lazy"></a><a href="/projects/__3.9___pocis/"><img src="/assets/__3.9___pocis/IMG_3008b.jpeg" alt="Passive sampler alternative to 'box'" loading="lazy"></a><a href="/projects/__5.4___pressureconcentrator/"><img src="/assets/__5.4___pressureconcentrator/disassembled.jpeg" alt="Novel field protein concentrator" loading="lazy"></a><a href="/projects/__5.4___pressureconcentrator/"><img src="/assets/__5.4___pressureconcentrator/solidmodel.png" alt="Novel field protein concentrator" loading="lazy"></a><a href="/projects/__5.4___pressureconcentrator/"><img src="/assets/__5.4___pressureconcentrator/assembled.jpeg" alt="Novel field protein concentrator" loading="lazy"></a><a href="/projects/app/"><img src="/assets/app/Screenshot_20190508-145507_Biobot.jpg" alt="Development of android app" loading="lazy"></a><a href="/projects/app/"><img src="/assets/app/Screenshot_20190508-145528_Biobot.jpg" alt="Development of android app" loading="lazy"></a><a href="/projects/app/"><img src="/assets/app/Screenshot_20190508-145606_Biobot.jpg" alt="Development of android app" loading="lazy"></a><a href="/projects/arm/"><img src="/assets/arm/remote.jpg" alt="PLCs for Autonomous Trucks" loading="lazy"></a><a href="/projects/arm/"><img src="/assets/arm/box.jpg" alt="PLCs for Autonomous Trucks" loading="lazy"></a><a href="/projects/bikesto/"><img src="/assets/bikesto/racks.png" alt="BikeSto, a city planning company idea" loading="lazy"></a><a href="/projects/covidshield/"><img src="/assets/covidshield/shield.jpg" alt="Covid Autoclave Shield" loading="lazy"></a><a href="/projects/covidshield/"><img src="/assets/covidshield/disassembled.png" alt="Covid Autoclave Shield" loading="lazy"></a><a href="/projects/cycler/"><img src="/assets/cycler/HighSpeedHydraulic.jpg" alt="Piezo-resistive Amplified High Speed Pressure Cycler" loading="lazy"></a><a href="/projects/cycler/"><img src="/assets/cycler/IMG_3271.JPG" alt="Piezo-resistive Amplified High Speed Pressure Cycler" loading="lazy"></a><a href="/projects/cycler/"><img src="/assets/cycler/closeup2.jpeg" alt="Piezo-resistive Amplified High Speed Pressure Cycler" loading="lazy"></a><a href="/projects/cycler/"><img src="/assets/cycler/Spline1000.jpg" alt="Piezo-resistive Amplified High Speed Pressure Cycler" loading="lazy"></a><a href="/projects/device/"><img src="/assets/device/IMG_0853.jpg" alt="The 'Box', an electromechanical sampling instrument for biologists and chemists" loading="lazy"></a><a href="/projects/device/"><img src="/assets/device/collage.jpg" alt="The 'Box', an electromechanical sampling instrument for biologists and chemists" loading="lazy"></a><a href="/projects/ebike/"><img src="/assets/ebike/ebike4.JPEG" alt="Stealthy electric city bike" loading="lazy"></a><a href="/projects/ebike/"><img src="/assets/ebike/IMG_2064.JPEG" alt="Stealthy electric city bike" loading="lazy"></a><a href="/projects/ebike/"><img src="/assets/ebike/IMG_2065.JPEG" alt="Stealthy electric city bike" loading="lazy"></a><a href="/projects/ebike/"><img src="/assets/ebike/IMG_2109.JPEG" alt="Stealthy electric city bike" loading="lazy"></a><a href="/projects/ebike/"><img src="/assets/ebike/IMG_2110.JPEG" alt="Stealthy electric city bike" loading="lazy"></a><a href="/projects/ebike/"><img src="/assets/ebike/IMG_4740C.jpeg" alt="Stealthy electric city bike" loading="lazy"></a><a href="/projects/fieldwork/"><img src="/assets/fieldwork/SQUAD2.JPEG" alt="Fieldwork, my time spent in the sewers" loading="lazy"></a><a href="/projects/fieldwork/"><img src="/assets/fieldwork/IMG_2939.JPEG" alt="Fieldwork, my time spent in the sewers" loading="lazy"></a><a href="/projects/fieldwork/"><img src="/assets/fieldwork/IMG_2264.JPEG" alt="Fieldwork, my time spent in the sewers" loading="lazy"></a><a href="/projects/fieldwork/"><img src="/assets/fieldwork/IMG_2092.JPEG" alt="Fieldwork, my time spent in the sewers" loading="lazy"></a><a href="/projects/fieldwork/"><img src="/assets/fieldwork/IMG_3012C.JPEG" alt="Fieldwork, my time spent in the sewers" loading="lazy"></a><a href="/projects/flopperthefrog/"><img src="/assets/flopperthefrog/img1.jpg" alt="Flopper the Frog, novel use of foamed silicones for a children's toy" loading="lazy"></a><a href="/projects/flopperthefrog/"><img src="/assets/flopperthefrog/img2.jpg" alt="Flopper the Frog, novel use of foamed silicones for a children's toy" loading="lazy"></a><a href="/projects/flopperthefrog/"><img src="/assets/flopperthefrog/img3.jpg" alt="Flopper the Frog, novel use of foamed silicones for a children's toy" loading="lazy"></a><a href="/projects/flopperthefrog/"><img src="/assets/flopperthefrog/img4.jpg" alt="Flopper the Frog, novel use of foamed silicones for a children's toy" loading="lazy"></a><a href="/projects/flopperthefrog/"><img src="/assets/flopperthefrog/img5.jpg" alt="Flopper the Frog, novel use of foamed silicones for a children's toy" loading="lazy"></a><a href="/projects/flopperthefrog/"><img src="/assets/flopperthefrog/img6.jpg" alt="Flopper the Frog, novel use of foamed silicones for a children's toy" loading="lazy"></a><a href="/projects/flopperthefrog/"><img src="/assets/flopperthefrog/img9.jpg" alt="Flopper the Frog, novel use of foamed silicones for a children's toy" loading="lazy"></a><a href="/projects/flopperthefrog/"><img src="/assets/flopperthefrog/img7.jpg" alt="Flopper the Frog, novel use of foamed silicones for a children's toy" loading="lazy"></a><a href="/projects/flopperthefrog/"><img src="/assets/flopperthefrog/img8.jpg" alt="Flopper the Frog, novel use of foamed silicones for a children's toy" loading="lazy"></a><a href="/projects/hci/"><img src="/assets/hci/completed.jpg" alt="Pedal that detects foot pressure" loading="lazy"></a><a href="/projects/hci/"><img src="/assets/hci/envelopecalcs.png" alt="Pedal that detects foot pressure" loading="lazy"></a><a href="/projects/hci/"><img src="/assets/hci/closeup.JPEG" alt="Pedal that detects foot pressure" loading="lazy"></a><a href="/projects/hci/"><img src="/assets/hci/pedal2.jpg" alt="Pedal that detects foot pressure" loading="lazy"></a><a href="/projects/ims/"><img src="/assets/ims/ism1.jpg" alt="Transmission Pressure Switches and Rotary Position Sensors" loading="lazy"></a><a href="/projects/ims/"><img src="/assets/ims/im2.jpg" alt="Transmission Pressure Switches and Rotary Position Sensors" loading="lazy"></a><a href="/projects/ims/"><img src="/assets/ims/psm1.jpg" alt="Transmission Pressure Switches and Rotary Position Sensors" loading="lazy"></a><a href="/projects/ims/"><img src="/assets/ims/psm2.jpg" alt="Transmission Pressure Switches and Rotary Position Sensors" loading="lazy"></a><a href="/projects/iot/"><img src="/assets/iot/IMG_2690.JPEG" alt="Subterranean cellular connected device" loading="lazy"></a><a href="/projects/iot/"><img src="/assets/iot/IMG_2693.JPEG" alt="Subterranean cellular connected device" loading="lazy"></a><a href="/projects/ipts/"><img src="/assets/ipts/ipts.jpg" alt="Integrated Pressure Temperature Sensor for Hermetic Under-hood Fuel Applications" loading="lazy"></a><a href="/projects/ipts/"><img src="/assets/ipts/ipts.png" alt="Integrated Pressure Temperature Sensor for Hermetic Under-hood Fuel Applications" loading="lazy"></a><a href="/projects/ipts/"><img src="/assets/ipts/ipts2.png" alt="Integrated Pressure Temperature Sensor for Hermetic Under-hood Fuel Applications" loading="lazy"></a><a href="/projects/jacket/"><img src="/assets/jacket/riding.gif" alt="Jacket that pulses with breathing" loading="lazy"></a><a href="/projects/jacket/"><img src="/assets/jacket/breathing.gif" alt="Jacket that pulses with breathing" loading="lazy"></a><a href="/projects/jacket/"><img src="/assets/jacket/circuit.JPEG" alt="Jacket that pulses with breathing" loading="lazy"></a><a href="/projects/jacket/"><img src="/assets/jacket/IMG_4585.JPEG" alt="Jacket that pulses with breathing" loading="lazy"></a><a href="/projects/jacket/"><img src="/assets/jacket/IMG_4599.JPEG" alt="Jacket that pulses with breathing" loading="lazy"></a><a href="/projects/lab/"><img src="/assets/lab/IMG_0661.JPEG" alt="Biobot Dry Lab, a makerspace for biologists, chemists and engineers" loading="lazy"></a><a href="/projects/lab/"><img src="/assets/lab/IMG_2524_1.jpeg" alt="Biobot Dry Lab, a makerspace for biologists, chemists and engineers" loading="lazy"></a><a href="/projects/lab/"><img src="/assets/lab/IMG_2524_2.jpeg" alt="Biobot Dry Lab, a makerspace for biologists, chemists and engineers" loading="lazy"></a><a href="/projects/lab/"><img src="/assets/lab/IMG_3023_1.JPEG" alt="Biobot Dry Lab, a makerspace for biologists, chemists and engineers" loading="lazy"></a><a href="/projects/lab/"><img src="/assets/lab/IMG_3023_2.JPEG" alt="Biobot Dry Lab, a makerspace for biologists, chemists and engineers" loading="lazy"></a><a href="/projects/lab/"><img src="/assets/lab/IMG_3024_1.JPEG" alt="Biobot Dry Lab, a makerspace for biologists, chemists and engineers" loading="lazy"></a><a href="/projects/lab/"><img src="/assets/lab/IMG_2613.JPEG" alt="Biobot Dry Lab, a makerspace for biologists, chemists and engineers" loading="lazy"></a><a href="/projects/lab/"><img src="/assets/lab/blueprint.jpg" alt="Biobot Dry Lab, a makerspace for biologists, chemists and engineers" loading="lazy"></a><a href="/projects/lifter/"><img src="/assets/lifter/old.jpeg" alt="High load manhole lifter" loading="lazy"></a><a href="/projects/lifter/"><img src="/assets/lifter/IMG_2970.JPEG" alt="High load manhole lifter" loading="lazy"></a><a href="/projects/lims/"><img src="/assets/lims/wingmill1.jpg" alt="Wingmill Energy Harvesting, novel wind energy harvesting device" loading="lazy"></a><a href="/projects/lims/"><img src="/assets/lims/wingmill2.jpg" alt="Wingmill Energy Harvesting, novel wind energy harvesting device" loading="lazy"></a><a href="/projects/lims/"><img src="/assets/lims/CURB_Spring13_Poster.JPEG" alt="Wingmill Energy Harvesting, novel wind energy harvesting device" loading="lazy"></a><a href="/projects/metalpump/"><img src="/assets/metalpump/IMG_0951.jpg" alt="Liquid Metal Pump" loading="lazy"></a><a href="/projects/morphableairfoil/"><img src="/assets/morphableairfoil/img1.png" alt="Morphable Airfoil" loading="lazy"></a><a href="/projects/notar/"><img src="/assets/notar/chart1.png" alt="Design of a NOTAR helicopter tail" loading="lazy"></a><a href="/projects/notar/"><img src="/assets/notar/airfoil2.png" alt="Design of a NOTAR helicopter tail" loading="lazy"></a><a href="/projects/notar/"><img src="/assets/notar/airfoil3.png" alt="Design of a NOTAR helicopter tail" loading="lazy"></a><a href="/projects/ols/"><img src="/assets/ols/sensata-ols-oil-level-sensor-image.jpg" alt="Autonomous vehicle sensor development" loading="lazy"></a><a href="/projects/ols/"><img src="/assets/ols/IMG_2271b.JPEG" alt="Autonomous vehicle sensor development" loading="lazy"></a><a href="/projects/ols/"><img src="/assets/ols/corona3.jpg" alt="Autonomous vehicle sensor development" loading="lazy"></a><a href="/projects/ols/"><img src="/assets/ols/IMG_2308.JPEG" alt="Autonomous vehicle sensor development" loading="lazy"></a><a href="/projects/ols/"><img src="/assets/ols/IMG_2982.JPEG" alt="Autonomous vehicle sensor development" loading="lazy"></a><a href="/projects/posters/"><img src="/assets/posters/ConnectorCrimpDeformation.jpg" alt="Assorted Technical Posters" loading="lazy"></a><a href="/projects/posters/"><img src="/assets/posters/HighSpeedHydraulic.jpg" alt="Assorted Technical Posters" loading="lazy"></a><a href="/projects/pump/"><img src="/assets/pump/IMG_4751.JPEG" alt="Development of a cheap, low flow pump" loading="lazy"></a><a href="/projects/pump/"><img src="/assets/pump/og.jpg" alt="Development of a cheap, low flow pump" loading="lazy"></a><a href="/projects/pump/"><img src="/assets/pump/rev3.JPG" alt="Development of a cheap, low flow pump" loading="lazy"></a><a href="/projects/pump/"><img src="/assets/pump/rev7.JPG" alt="Development of a cheap, low flow pump" loading="lazy"></a><a href="/projects/retrocycle/"><img src="/assets/retrocycle/r2_inside2.jpg" alt="100 year old electric bicycle" loading="lazy"></a><a href="/projects/retrocycle/"><img src="/assets/retrocycle/r0_framestretch.jpg" alt="100 year old electric bicycle" loading="lazy"></a><a href="/projects/retrocycle/"><img src="/assets/retrocycle/r1_sideview.jpg" alt="100 year old electric bicycle" loading="lazy"></a><a href="/projects/rpl/"><img src="/assets/rpl/IMG_0933.jpg" alt="Founding of the Rapid Prototyping Lab (inspired by fab lab)" loading="lazy"></a><a href="/projects/rpl/"><img src="/assets/rpl/lab.jpg" alt="Founding of the Rapid Prototyping Lab (inspired by fab lab)" loading="lazy"></a><a href="/projects/scrum/"><img src="/assets/scrum/IMG_2689.JPEG" alt="Scrum, a bit more 'tacky' than your average Jira board" loading="lazy"></a><a href="/projects/scrum/"><img src="/assets/scrum/IMG_2758.JPEG" alt="Scrum, a bit more 'tacky' than your average Jira board" loading="lazy"></a><a href="/projects/swab/"><img src="/assets/swab/swab.jpg" alt="Covid swab" loading="lazy"></a><a href="/projects/tapworks/"><img src="/assets/tapworks/prototype.jpeg" alt="Smart tap handle" loading="lazy"></a><a href="/projects/tapworks/"><img src="/assets/tapworks/IMG_3957.JPEG" alt="Smart tap handle" loading="lazy"></a><a href="/projects/tapworks/"><img src="/assets/tapworks/IMG_3960.JPEG" alt="Smart tap handle" loading="lazy"></a><a href="/projects/tesla/"><img src="/assets/tesla/handheld.JPEG" alt="Mystery of the High Voltage Generator" loading="lazy"></a><a href="/projects/water/"><img src="/assets/water/flamethrower.jpeg" alt="The Interesting Company, Intumister" loading="lazy"></a><a href="/projects/water/"><img src="/assets/water/water.jpeg" alt="The Interesting Company, Intumister" loading="lazy"></a><a href="/projects/water/"><img src="/assets/water/blower.jpeg" alt="The Interesting Company, Intumister" loading="lazy"></a><a href="/projects/windmill/"><img src="/assets/windmill/windmill1.jpg" alt="Windmill Powered Water Pump, "Project Manly"" loading="lazy"></a><a href="/projects/windmill/"><img src="/assets/windmill/windmill2.jpg" alt="Windmill Powered Water Pump, "Project Manly"" loading="lazy"></a><a href="/projects/windmill/"><img src="/assets/windmill/windmill3.jpg" alt="Windmill Powered Water Pump, "Project Manly"" loading="lazy"></a></div>
+
+  <div class="floating-window">
+    <div class="window-header">
+      <span class="window-title">Website Navigation</span>
+      <div class="window-controls">
+        <div class="window-button close-btn">×</div>
+      </div>
+    </div>
+    <div class="window-content">
+      <div class="dialog-section">
+        <div class="exclamation-icon"></div>
+        <div class="dialog-text">
+          "Welcome to my website here you'll find nothing; here you'll find everything"<br><br>
+          -Nikhil B. Lal
+        </div>
+      </div>
+      <div class="button-section">
+        <div class="button-group">
+          <div class="button-group-label">Internal:</div>
+          <div class="button-row">
+            <a href="/about/" class="nav-button"><span class="shortcut">A</span>bout Me</a>
+            <a href="/articles/" class="nav-button">A<span class="shortcut">r</span>ticles</a>
+            <a href="/projects/" class="nav-button">All <span class="shortcut">P</span>rojects</a>
+          </div>
+        </div>
+        <div class="button-group">
+          <div class="button-group-label">External:</div>
+          <div class="button-row">
+            <a href="https://patents.justia.com/inventor/nikhil-b-lal" class="nav-button" target="_blank">Pa<span class="shortcut">t</span>ents</a>
+            <a href="https://scholar.google.com/citations?user=GLdoyI4AAAAJ" class="nav-button" target="_blank">Pap<span class="shortcut">e</span>rs</a>
+            <a href="https://github.com/nikhilblal" class="nav-button" target="_blank"><span class="shortcut">G</span>itHub</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body></html>
