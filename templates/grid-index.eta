@@ -215,52 +215,20 @@
             </div>
 
             <!-- Portfolio Items -->
-                                            <a href="/projects/roboticarm/" class="portfolio-box">
+            <% it.projects.forEach(function(project) { %>
+                <% if (project.images && project.images.length > 0) { %>
+                <a href="<%= project.url %>" class="portfolio-box">
                     <div class="breathe-ring breathe-ring-1"></div>
                     <div class="breathe-ring breathe-ring-2"></div>
                     <div class="breathe-ring breathe-ring-3"></div>
                     <div class="breathe-ring breathe-ring-4"></div>
                     <div class="portfolio-box-inner">
-                        <img src="/assets/roboticarm/gif_conv.gif" alt="Robotic Arm Weekend Hack" loading="lazy">
+                        <img src="<%= project.images[0] %>" alt="<%= project.title %>" loading="lazy">
                     </div>
                 </a>
-                                                            <a href="/projects/ebike/" class="portfolio-box">
-                    <div class="breathe-ring breathe-ring-1"></div>
-                    <div class="breathe-ring breathe-ring-2"></div>
-                    <div class="breathe-ring breathe-ring-3"></div>
-                    <div class="breathe-ring breathe-ring-4"></div>
-                    <div class="portfolio-box-inner">
-                        <img src="/assets/ebike/BIKE2.jpg" alt="Stealthy electric city bike" loading="lazy">
-                    </div>
-                </a>
-                                                            <a href="/projects/jacket/" class="portfolio-box">
-                    <div class="breathe-ring breathe-ring-1"></div>
-                    <div class="breathe-ring breathe-ring-2"></div>
-                    <div class="breathe-ring breathe-ring-3"></div>
-                    <div class="breathe-ring breathe-ring-4"></div>
-                    <div class="portfolio-box-inner">
-                        <img src="/assets/jacket/breathing.gif" alt="Jacket that pulses with breathing" loading="lazy">
-                    </div>
-                </a>
-                                                            <a href="/projects/covidshield/" class="portfolio-box">
-                    <div class="breathe-ring breathe-ring-1"></div>
-                    <div class="breathe-ring breathe-ring-2"></div>
-                    <div class="breathe-ring breathe-ring-3"></div>
-                    <div class="breathe-ring breathe-ring-4"></div>
-                    <div class="portfolio-box-inner">
-                        <img src="/assets/covidshield/shield.jpg" alt="Covid Autoclave Shield" loading="lazy">
-                    </div>
-                </a>
-                                                            <a href="/projects/cycler/" class="portfolio-box">
-                    <div class="breathe-ring breathe-ring-1"></div>
-                    <div class="breathe-ring breathe-ring-2"></div>
-                    <div class="breathe-ring breathe-ring-3"></div>
-                    <div class="breathe-ring breathe-ring-4"></div>
-                    <div class="portfolio-box-inner">
-                        <img src="/assets/cycler/closeup2.jpeg" alt="Piezo-resistive Amplified High Speed Pressure Cycler" loading="lazy">
-                    </div>
-                </a>
-                                    </div>
+                <% } %>
+            <% }); %>
+        </div>
     </div>
 </body>
 </html>

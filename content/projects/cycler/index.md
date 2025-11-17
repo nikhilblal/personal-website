@@ -4,6 +4,7 @@ categories: ['sensata']
 featuredImage: './closeup2.jpeg'
 featured: true
 template: page
+frontpage: 6
 ---
 ![](HighSpeedHydraulic.jpg)
 

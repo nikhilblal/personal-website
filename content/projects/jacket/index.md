@@ -2,8 +2,9 @@
 title: Jacket that pulses with breathing
 categories: ['projects']
 featured: true
-featuredImage: './jacket.jpg'
+featuredImage: './breathing.gif'
 template: page
+frontpage: 4
 ---
 ![](riding.gif)
 

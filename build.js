@@ -223,6 +223,7 @@ async function processMarkdownFile(filePath, contentDir, distDir) {
 async function collectProjectImages() {
   const contentDir = path.join(__dirname, 'content');
   const projects = [];
+  const frontpageNumbers = new Set();
 
   // Scan all project directories
   const projectsDir = path.join(contentDir, 'projects');
@@ -236,35 +237,72 @@ async function collectProjectImages() {
         const content = await fs.readFile(projectPath, 'utf8');
         const { data: frontmatter, content: markdown } = matter(content);
 
-        // Extract images from markdown
-        const imageRegex = /!\[.*?\]\((.*?)\)/g;
-        const images = [];
-        let match;
+        // Only include projects with a frontpage field and not explicitly marked as featured: false
+        if (frontmatter.frontpage !== undefined && frontmatter.featured !== false) {
+          const frontpageNum = frontmatter.frontpage;
 
-        while ((match = imageRegex.exec(markdown)) !== null) {
-          let imagePath = match[1];
-          // Convert relative paths to absolute asset paths
-          if (imagePath.startsWith('./')) {
-            imagePath = `/assets/${dir.name}/${imagePath.slice(2)}`;
-          } else if (!imagePath.startsWith('http')) {
-            imagePath = `/assets/${dir.name}/${imagePath}`;
+          // Validate frontpage number
+          if (!Number.isInteger(frontpageNum) || frontpageNum < 1 || frontpageNum > 7) {
+            throw new Error(`Project "${dir.name}" has invalid frontpage value: ${frontpageNum}. Must be an integer between 1 and 7.`);
           }
-          images.push(imagePath);
-        }
 
-        if (images.length > 0) {
-          projects.push({
-            name: dir.name,
-            title: frontmatter.title || dir.name,
-            images: images,
-            url: `/projects/${dir.name}/`
-          });
+          // Check for duplicates
+          if (frontpageNumbers.has(frontpageNum)) {
+            throw new Error(`Duplicate frontpage number ${frontpageNum} found in project "${dir.name}". Each project must have a unique frontpage number.`);
+          }
+          frontpageNumbers.add(frontpageNum);
+
+          const images = [];
+
+          // Check for featuredImage in frontmatter first
+          if (frontmatter.featuredImage) {
+            let imagePath = frontmatter.featuredImage;
+            // Convert relative paths to absolute asset paths
+            if (imagePath.startsWith('./')) {
+              imagePath = `/assets/${dir.name}/${imagePath.slice(2)}`;
+            } else if (!imagePath.startsWith('http')) {
+              imagePath = `/assets/${dir.name}/${imagePath}`;
+            }
+            images.push(imagePath);
+          } else {
+            // Fall back to extracting images from markdown
+            const imageRegex = /!\[.*?\]\((.*?)\)/g;
+            let match;
+
+            while ((match = imageRegex.exec(markdown)) !== null) {
+              let imagePath = match[1];
+              // Convert relative paths to absolute asset paths
+              if (imagePath.startsWith('./')) {
+                imagePath = `/assets/${dir.name}/${imagePath.slice(2)}`;
+              } else if (!imagePath.startsWith('http')) {
+                imagePath = `/assets/${dir.name}/${imagePath}`;
+              }
+              images.push(imagePath);
+            }
+          }
+
+          if (images.length > 0) {
+            projects.push({
+              name: dir.name,
+              title: frontmatter.title || dir.name,
+              images: images,
+              url: `/projects/${dir.name}/`,
+              frontpage: frontpageNum
+            });
+          }
         }
       } catch (err) {
+        // Re-throw validation errors
+        if (err.message.includes('frontpage')) {
+          throw err;
+        }
         // Skip if no index.md or other error
       }
     }
   }
+
+  // Sort by frontpage number
+  projects.sort((a, b) => a.frontpage - b.frontpage);
 
   return projects;
 }
@@ -272,383 +310,14 @@ async function collectProjectImages() {
 async function generateImageGridIndex(projects) {
   const distDir = path.join(__dirname, 'dist');
 
-  // Create minimal HTML with just image grid
-  let html = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Portfolio</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-    .grid img, .grid video { width: 100%; height: 200px; object-fit: cover; display: block; }
-    .grid a { display: block; }
+  // Use the new grid template
+  const pageData = {
+    projects: projects
+  };
 
-    .floating-window {
-      position: fixed;
-      width: 300px;
-      height: 220px;
-      background: #c0c0c0;
-      border-top: 3px solid #ffffff;
-      border-left: 3px solid #ffffff;
-      border-right: 3px solid #808080;
-      border-bottom: 3px solid #808080;
-      font-family: 'MS Sans Serif', monospace;
-      font-size: 11px;
-      z-index: 1000;
-    }
-
-    .window-header {
-      background: linear-gradient(90deg, #0a246a 0%, #a6caf0 100%);
-      color: white;
-      padding: 2px 4px;
-      font-weight: bold;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 18px;
-      cursor: move;
-    }
-
-    .window-title {
-      font-size: 11px;
-      font-family: 'MS Sans Serif', monospace;
-    }
-
-    .window-controls {
-      display: flex;
-      gap: 2px;
-    }
-
-    .window-button {
-      width: 16px;
-      height: 14px;
-      background: #c0c0c0;
-      border-top: 1px solid #ffffff;
-      border-left: 1px solid #ffffff;
-      border-right: 1px solid #808080;
-      border-bottom: 1px solid #808080;
-      font-size: 9px;
-      line-height: 12px;
-      text-align: center;
-      cursor: pointer;
-    }
-
-    .window-button:active {
-      border-top: 1px solid #808080;
-      border-left: 1px solid #808080;
-      border-right: 1px solid #ffffff;
-      border-bottom: 1px solid #ffffff;
-    }
-
-    .window-content {
-      padding: 8px;
-      height: calc(100% - 18px);
-      background: #c0c0c0;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .dialog-section {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 8px;
-      gap: 8px;
-    }
-
-    .exclamation-icon {
-      width: 32px;
-      height: 32px;
-      background-image: url('https://64.media.tumblr.com/016da1fe17e4448ffe5dec8245bc6de2/a56aedd6feaabeea-69/s540x810/0396db374112ada8381638997a7b4ace003c9476.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      flex-shrink: 0;
-    }
-
-    .dialog-text {
-      font-size: 11px;
-      line-height: 1.4;
-      color: #000000;
-      font-family: 'MS Sans Serif', monospace;
-    }
-
-    .button-section {
-      margin-top: auto;
-      padding-bottom: 12px;
-    }
-
-    .button-group {
-      margin-bottom: 8px;
-    }
-
-    .button-group:last-child {
-      margin-bottom: 8px;
-    }
-
-    .button-group-label {
-      font-size: 10px;
-      font-weight: bold;
-      margin-bottom: 4px;
-      color: #000000;
-      font-family: 'MS Sans Serif', monospace;
-    }
-
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-
-    .nav-button {
-      display: inline-block;
-      width: auto;
-      min-width: 60px;
-      padding: 2px 8px;
-      background: #c0c0c0;
-      border-top: 2px solid #ffffff;
-      border-left: 2px solid #ffffff;
-      border-right: 2px solid #808080;
-      border-bottom: 2px solid #808080;
-      text-decoration: none;
-      color: black;
-      font-size: 10px;
-      font-family: 'MS Sans Serif', monospace;
-      text-align: center;
-    }
-
-    .nav-button .shortcut {
-      text-decoration: underline;
-    }
-
-    .nav-button:hover {
-      background: #e0e0e0;
-    }
-
-    .nav-button:active {
-      border-top: 2px solid #808080;
-      border-left: 2px solid #808080;
-      border-right: 2px solid #ffffff;
-      border-bottom: 2px solid #ffffff;
-      background: #c0c0c0;
-    }
-  </style>
-  <script>
-    function playDing() {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-
-      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.01);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.2);
-    }
-
-    function playButtonClick() {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-
-      // Short "doot" sound - higher pitch, very brief
-      oscillator.frequency.setValueAtTime(1200, audioContext.currentTime);
-      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.005);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
-
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.05);
-    }
-
-    let windowX = 50;
-    let windowY = 50;
-    let velocityX = 1.6;
-    let velocityY = 1.2;
-    let isPaused = false;
-
-    function bounceWindow() {
-      const floatingWindow = document.querySelector('.floating-window');
-      if (!floatingWindow || isPaused) {
-        requestAnimationFrame(bounceWindow);
-        return;
-      }
-
-      const windowWidth = 300;
-      const windowHeight = 220;
-      const screenWidth = window.innerWidth;
-      const screenHeight = window.innerHeight;
-
-      windowX += velocityX;
-      windowY += velocityY;
-
-      if (windowX <= 0 || windowX >= screenWidth - windowWidth) {
-        velocityX = -velocityX;
-      }
-      if (windowY <= 0 || windowY >= screenHeight - windowHeight) {
-        velocityY = -velocityY;
-      }
-
-      windowX = Math.max(0, Math.min(windowX, screenWidth - windowWidth));
-      windowY = Math.max(0, Math.min(windowY, screenHeight - windowHeight));
-
-      floatingWindow.style.left = windowX + 'px';
-      floatingWindow.style.top = windowY + 'px';
-
-      requestAnimationFrame(bounceWindow);
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      const images = document.querySelectorAll('.grid img');
-      images.forEach(img => {
-        img.addEventListener('mouseenter', playDing);
-      });
-
-      // Start bouncing animation
-      bounceWindow();
-
-      // Pause animation on hover
-      const floatingWindow = document.querySelector('.floating-window');
-      if (floatingWindow) {
-        floatingWindow.addEventListener('mouseenter', function() {
-          isPaused = true;
-        });
-
-        floatingWindow.addEventListener('mouseleave', function() {
-          isPaused = false;
-        });
-      }
-
-      // Add click sound to all navigation buttons
-      const navButtons = document.querySelectorAll('.nav-button');
-      navButtons.forEach(button => {
-        button.addEventListener('click', playButtonClick);
-      });
-
-      // Add keyboard shortcuts (direct key presses)
-      document.addEventListener('keydown', function(e) {
-        // Only trigger if not typing in an input field or textarea, and not holding modifier keys
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' ||
-            e.target.isContentEditable || e.ctrlKey || e.metaKey || e.altKey) {
-          return;
-        }
-
-        switch(e.key.toLowerCase()) {
-          case 'a':
-            e.preventDefault();
-            e.stopPropagation();
-            playButtonClick();
-            window.location.href = '/about/';
-            break;
-          case 'r':
-            e.preventDefault();
-            e.stopPropagation();
-            playButtonClick();
-            window.location.href = '/articles/';
-            break;
-          case 'p':
-            e.preventDefault();
-            e.stopPropagation();
-            playButtonClick();
-            window.location.href = '/projects/';
-            break;
-          case 't':
-            e.preventDefault();
-            e.stopPropagation();
-            playButtonClick();
-            window.open('https://patents.justia.com/inventor/nikhil-b-lal', '_blank');
-            break;
-          case 'e':
-            e.preventDefault();
-            e.stopPropagation();
-            playButtonClick();
-            window.open('https://scholar.google.com/citations?user=GLdoyI4AAAAJ', '_blank');
-            break;
-          case 'g':
-            e.preventDefault();
-            e.stopPropagation();
-            playButtonClick();
-            window.open('https://github.com/nikhilblal', '_blank');
-            break;
-        }
-      });
-
-      // Close button functionality
-      const closeBtn = document.querySelector('.close-btn');
-      if (closeBtn) {
-        closeBtn.addEventListener('click', function() {
-          playButtonClick();
-          const floatingWindow = document.querySelector('.floating-window');
-          if (floatingWindow) {
-            floatingWindow.style.display = 'none';
-          }
-        });
-      }
-    });
-  </script>
-</head>
-<body>
-  <div class="grid">`;
-
-  // Add all images from all projects
-  for (const project of projects) {
-    for (const image of project.images) {
-      html += `<a href="${project.url}"><img src="${image}" alt="${project.title}" loading="lazy"></a>`;
-    }
-  }
-
-  html += `</div>
-
-  <div class="floating-window">
-    <div class="window-header">
-      <span class="window-title">Website Navigation</span>
-      <div class="window-controls">
-        <div class="window-button close-btn">×</div>
-      </div>
-    </div>
-    <div class="window-content">
-      <div class="dialog-section">
-        <div class="exclamation-icon"></div>
-        <div class="dialog-text">
-          "Welcome to my website here you'll find nothing; here you'll find everything"<br><br>
-          -Nikhil B. Lal
-        </div>
-      </div>
-      <div class="button-section">
-        <div class="button-group">
-          <div class="button-group-label">Internal:</div>
-          <div class="button-row">
-            <a href="/about/" class="nav-button"><span class="shortcut">A</span>bout Me</a>
-            <a href="/articles/" class="nav-button">A<span class="shortcut">r</span>ticles</a>
-            <a href="/projects/" class="nav-button">All <span class="shortcut">P</span>rojects</a>
-          </div>
-        </div>
-        <div class="button-group">
-          <div class="button-group-label">External:</div>
-          <div class="button-row">
-            <a href="https://patents.justia.com/inventor/nikhil-b-lal" class="nav-button" target="_blank">Pa<span class="shortcut">t</span>ents</a>
-            <a href="https://scholar.google.com/citations?user=GLdoyI4AAAAJ" class="nav-button" target="_blank">Pap<span class="shortcut">e</span>rs</a>
-            <a href="https://github.com/nikhilblal" class="nav-button" target="_blank"><span class="shortcut">G</span>itHub</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</body></html>`;
-
-  await fs.writeFile(path.join(distDir, 'index.html'), html);
-  console.log('Generated: image grid index.html');
+  const renderedHtml = await eta.render('grid-index', pageData);
+  await fs.writeFile(path.join(distDir, 'index.html'), renderedHtml);
+  console.log('Generated: grid-index.html');
 }
 
 async function build(isWatchMode = false) {

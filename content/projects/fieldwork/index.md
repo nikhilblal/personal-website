@@ -4,6 +4,7 @@ categories: ['biobot']
 featured: false
 featuredImage: './SQUAD2.JPEG'
 template: page
+frontpage: 3
 ---
 
 ## Summary

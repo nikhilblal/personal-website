@@ -4,6 +4,7 @@ categories: ['biobot']
 featured: false
 featuredImage: './IMG_2692B.JPEG'
 template: page
+frontpage: 7
 ---
 
 ![](IMG_2690.JPEG)
