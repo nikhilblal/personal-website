@@ -1,5 +1,6 @@
 ---
-title: The 'Box', an electromechanical sampling instrument for biologists and chemists
+title: The 'Box' - wastewater autosampler
+date: 2019
 categories: ['biobot']
 featuredImage: './IMG_0853.jpg'
 featured: false

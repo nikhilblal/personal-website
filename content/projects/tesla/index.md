@@ -1,5 +1,6 @@
 ---
-title: Mystery of the High Voltage Generator
+title: Mystery of the high voltage generator
+date: 2018
 categories: ['projects']
 template: page
 ---

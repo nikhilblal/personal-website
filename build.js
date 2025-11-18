@@ -102,6 +102,26 @@ async function optimizeImage(srcPath, destPath) {
         .toFile(destPath);
 
       console.log(`Optimized image: ${path.basename(srcPath)}`);
+    } else if (ext === '.gif') {
+      // For GIFs: copy the original AND create a static thumbnail
+      await fs.copyFile(srcPath, destPath);
+
+      // Generate static thumbnail from first frame
+      const staticPath = destPath.replace(/\.gif$/i, '-static.jpg');
+      try {
+        await sharp(srcPath, { animated: false })
+          .resize(1200, null, {
+            withoutEnlargement: true,
+            fit: 'inside'
+          })
+          .jpeg({ quality: 80 })
+          .toFile(staticPath);
+        console.log(`Created static thumbnail: ${path.basename(staticPath)}`);
+      } catch (gifErr) {
+        console.log(`Could not create static thumbnail for ${path.basename(srcPath)}`);
+      }
+
+      console.log(`Copied GIF: ${path.basename(srcPath)}`);
     } else {
       // Copy non-image files as-is
       await fs.copyFile(srcPath, destPath);
@@ -265,10 +285,26 @@ async function collectProjectImages() {
           }
 
           if (images.length > 0) {
+            // Process images to detect GIFs and add static versions
+            const processedImages = images.map(img => {
+              if (img.toLowerCase().endsWith('.gif')) {
+                return {
+                  static: img.replace(/\.gif$/i, '-static.jpg'),
+                  animated: img,
+                  isGif: true
+                };
+              }
+              return {
+                static: img,
+                animated: img,
+                isGif: false
+              };
+            });
+
             projects.push({
               name: dir.name,
               title: frontmatter.title || dir.name,
-              images: images,
+              images: processedImages,
               url: `/projects/${dir.name}/`,
               frontpage: frontpageNum
             });
@@ -346,6 +382,47 @@ async function build(isWatchMode = false) {
   } catch (err) {
     // Projects directory might not exist
   }
+
+  // Auto-generate missing project index.md files
+  async function generateMissingProjectPages() {
+    const projectsDir = path.join(contentDir, 'projects');
+    try {
+      const projectDirs = await fs.readdir(projectsDir, { withFileTypes: true });
+
+      for (const dir of projectDirs) {
+        if (dir.isDirectory()) {
+          const indexPath = path.join(projectsDir, dir.name, 'index.md');
+
+          try {
+            await fs.access(indexPath);
+            // File exists, skip
+          } catch {
+            // File doesn't exist, create it
+            const title = dir.name
+              .replace(/[-_]/g, ' ')
+              .replace(/\b\w/g, l => l.toUpperCase());
+
+            const defaultContent = `---
+title: ${title}
+template: page
+---
+
+# ${title}
+
+Project documentation coming soon.
+`;
+
+            await fs.writeFile(indexPath, defaultContent);
+            console.log(`Auto-generated index.md for project: ${dir.name}`);
+          }
+        }
+      }
+    } catch (err) {
+      // Projects directory might not exist
+    }
+  }
+
+  await generateMissingProjectPages();
 
   // Collect project images for grid
   const projects = await collectProjectImages();

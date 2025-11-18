@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flopper the Frog, novel use of foamed silicones for a children&#39;s toy</title>
+    <title>Flopper the Frog</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -19,10 +19,7 @@
     </header>
 
     <main>
-        <article>
-            <header>
-                <h1>Flopper the Frog, novel use of foamed silicones for a children&#39;s toy</h1>
-                            </header>
+        <article class="project-article">
             <div class="content">
                 <h4>Teammates:</h4>
 <p><a href="https://alexkrolick.com/">Alex Krolick</a>, Sam Daly</p>
@@ -31,23 +28,23 @@
 <h2>Summary</h2>
 <p>My favorite project at Cornell, Flopper the Frog was a game we designed as a 21st century take on Hasbro’s Operation. Flopper was a silicone frog body with spongy silicone organs we prototyped using novel techniques involving 3D printed (FDM) molds and <a href="https://cornell.flintbox.com/#technologies/76b9d5de-6d12-4084-99ee-3abc60e46795">modified silicones</a> from Dr. Shepherd’s research. The game concept was to follow instructions on our website, <a href="http://flopperthefrog.com/">flopperthefrog.com</a>, and remove organs, as instructed by a series of clues about the frog’s body. Unlike in Operation where the board, i.e. human, was the contact point - the tweezers themselves buzzed in hand when too much force was applied in tweezing out the organs.  The fully functional game was demoed at various toy stores and the Science Center in Ithaca, NY. All the children who played the game were very receptive of it, the team felt the game was a total success, and likely market viable.</p>
 <h2>Photos</h2>
-<p><img src="img1.jpg" alt="">
+<p><img src="/assets/flopperthefrog/img1.jpg" alt="">
 <em>Fig. 1: Tweezer prototype, if an organ was squeezed too hard it would vibrate (me in the background)</em></p>
-<p><img src="img2.jpg" alt="">
+<p><img src="/assets/flopperthefrog/img2.jpg" alt="">
 <em>Fig. 2: Molding Rev1 frog, significant excessive material on print</em></p>
-<p><img src="img3.jpg" alt="">
+<p><img src="/assets/flopperthefrog/img3.jpg" alt="">
 <em>Fig. 3: Rev1 frog, chest cavity much too small</em></p>
-<p><img src="img4.jpg" alt="">
+<p><img src="/assets/flopperthefrog/img4.jpg" alt="">
 <em>Fig. 4: Printing out the Rev2 frog mold, material reduced mold</em></p>
-<p><img src="img5.jpg" alt="">
+<p><img src="/assets/flopperthefrog/img5.jpg" alt="">
 <em>Fig. 5: Rev2 mold</em></p>
-<p><img src="img6.jpg" alt="">
+<p><img src="/assets/flopperthefrog/img6.jpg" alt="">
 <em>Fig. 6: Casting Rev2 mold</em></p>
-<p><img src="img9.jpg" alt="">
+<p><img src="/assets/flopperthefrog/img9.jpg" alt="">
 <em>Fig. 7: Organs molded with salt to guarantee porosity</em></p>
-<p><img src="img7.jpg" alt="">
+<p><img src="/assets/flopperthefrog/img7.jpg" alt="">
 <em>Fig. 8: Tweezing out organs from frog mold, demo at Ithaca Science Center</em></p>
-<p><img src="img8.jpg" alt="">
+<p><img src="/assets/flopperthefrog/img8.jpg" alt="">
 <em>Fig. 9: Another angle of demo</em></p>
             </div>
         </article>
@@ -56,5 +53,87 @@
     <footer>
         <p>&copy; 2025</p>
     </footer>
+
+    <script>
+        const article = document.querySelector('.project-article');
+        const content = document.querySelector('.content');
+        const firstImg = content.querySelector('img');
+
+        // Move title and date below first image
+        if (firstImg) {
+            const header = document.createElement('header');
+            header.className = 'project-header';
+
+            const title = document.createElement('h1');
+            title.textContent = 'Flopper the Frog';
+            header.appendChild(title);
+
+                        const time = document.createElement('time');
+            time.setAttribute('datetime', '2014');
+            time.textContent = '2014';
+            header.appendChild(time);
+            
+            firstImg.parentNode.insertBefore(header, firstImg.nextSibling);
+        }
+
+        // Hide "Summary" and "Photos" headings
+        const headings = content.querySelectorAll('h2');
+        headings.forEach(h => {
+            const text = h.textContent.trim();
+            if (text === 'Summary' || text === 'Photos') {
+                h.style.display = 'none';
+            }
+        });
+
+        // Find content fold marker (<!--more--> becomes an HTML comment)
+        const allNodes = Array.from(content.childNodes);
+        let foldIndex = -1;
+
+        allNodes.forEach((node, i) => {
+            if (node.nodeType === Node.COMMENT_NODE && node.textContent.trim() === 'more') {
+                foldIndex = i;
+            }
+        });
+
+        // If fold marker found, split content
+        if (foldIndex > -1) {
+            const aboveFold = document.createElement('div');
+            aboveFold.className = 'above-fold';
+
+            const belowFold = document.createElement('div');
+            belowFold.className = 'below-fold';
+
+            const indicator = document.createElement('button');
+            indicator.className = 'scroll-indicator';
+            indicator.innerHTML = '<span>↓</span>';
+            indicator.setAttribute('aria-label', 'Show more content');
+
+            // Split content at fold
+            allNodes.forEach((node, i) => {
+                if (i < foldIndex) {
+                    aboveFold.appendChild(node.cloneNode(true));
+                } else if (i > foldIndex) {
+                    belowFold.appendChild(node.cloneNode(true));
+                }
+            });
+
+            // Clear and rebuild
+            content.innerHTML = '';
+            content.appendChild(aboveFold);
+            content.appendChild(indicator);
+            content.appendChild(belowFold);
+
+            // Click to reveal
+            indicator.addEventListener('click', () => {
+                belowFold.classList.add('revealed');
+                indicator.style.opacity = '0';
+
+                // Smooth scroll to revealed content
+                setTimeout(() => {
+                    belowFold.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            });
+        }
+    </script>
 </body>
 </html>

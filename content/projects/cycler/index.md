@@ -1,12 +1,13 @@
 ---
-title: Piezo-resistive Amplified High Speed Pressure Cycler
+title: Record-setting pressure cycler
+date: 2015
 categories: ['sensata']
 featuredImage: './closeup2.jpeg'
 featured: true
 template: page
 frontpage: 6
 ---
-![](HighSpeedHydraulic.jpg)
+![](closeup2.jpeg)
 
 ## Summary
 
@@ -14,6 +15,7 @@ I developed a system of pressure cycling that would enable me to high speed pres
 
 As an expansion, I was able to run mechanical resonant frequency analysis using the piezo actuator, which enabled Sensata, for the first time, to mechanically characterize the frequency response of a sensor and generate useful data to empirically derive their true mechanical transfer function.
 
+<!--more-->
 
 ## Photos
 ![](IMG_3271.JPG)
@@ -24,3 +26,5 @@ As an expansion, I was able to run mechanical resonant frequency analysis using 
 
 ![](Spline1000.jpg)
 *Fig. 3: Following the poster session, I spent time conducting additional testing to gather enough data to normalize the sensor outputs. Each dot on this plot represents a discrete sampling at a particular frequency. A Fast Fourier Transform is conducted on each subset of data at every frequency tested, and the aggregate of every transform is plotted here using a MATLAB script. The digital filtering (Low Pass Filter emulation) built into the ASIC of the Gen4 sensor dampens response compared to the Gen3 ASIC that does not have this feature.*
+
+![](HighSpeedHydraulic.jpeg)

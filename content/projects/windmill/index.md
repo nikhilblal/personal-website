@@ -1,5 +1,6 @@
 ---
-title: Windmill Powered Water Pump, "Project Manly"
+title: Windmill Design
+date: 2012
 categories: ['cornell']
 template: page
 ---

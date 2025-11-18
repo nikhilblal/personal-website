@@ -1,20 +1,24 @@
 ---
 title: Stealthy electric city bike
+date: 2018
 categories: ['projects']
 featured: true
 featuredImage: './BIKE2.jpg'
 template: page
 frontpage: 2
 ---
+
 ![](ebike4.JPEG)
-
-`youtube: fR6uySCIAOo`
-
-*Demo of e-bike near Greentown Labs, super fun ride!*
 
 ## Summary
 
-My first e-bike. I pursued a stealth build that required a bit of custom fabrication to get just right. The bike uses a small 16s1p, 60V nominal, 3Ah LiPo battery pack, an Infineon controller with the MOSFETs replaced with authentic [IRFB4110s](https://www.infineon.com/dgdl/irfb4110pbf.pdf?fileId=5546d462533600a401535615a9571e0b), and a Cycle Analyst V2 computer. Assuming a generous engineering safety factor, I limited peak power to 1500w (25A@60V) for initial tests, nothing has melted yet, but just to be safe I've dialed it down to 18A peak for daily use. The design was unconventionally optimized for high voltage but, relative to most high power Electrified bicycle designs, low current draw due to the limitation that the motor and motor wiring expect only 10A continuous.
+A concealed, lightweight electric bicycle built around an unusually high 60 V system — a voltage more typical of e-motorcycles. Powered by a compact 16s1p LiPo pack and a modified Infineon controller with IRFB4110 MOSFETs, the bike briefly reached 1500 W before clutch slip and rider sanity set the limit; daily use is capped at 18 A to protect a motor rated for 10 A continuous. The stealth packaging, upright riding position, and silent acceleration created the uncanny impression of a normal bike moving impossibly fast through traffic.
+
+`youtube: fR6uySCIAOo`
+
+<!--more--> 
+
+## Technical Specifications
 
 Parameters | Value
 ------------ | ------------

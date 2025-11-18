@@ -1,11 +1,13 @@
 ---
-title: Covid Autoclave Shield
+title: Covid autoclave shield
+date: 2020
 categories: ['projects']
 featured: true
 featuredImage: './shield.jpg'
 template: page
 frontpage: 5
 ---
+
 ![](shield.jpg)
 
 ## Summary
@@ -17,12 +19,16 @@ During the months of April and May we built thousands of these shields.
 
 [Link to GitHub Repo](https://github.com/nikaiser/SARS-CoV-2)
 
+
 ## Media
 <!--`youtube: Gp61NSQn5dA<`
 -->
 [Boston Herald](https://web.archive.org/web/20200401015519/https://www.bostonherald.com/2020/03/31/coronavirus-crisis-prompts-somerville-artists-to-make-masks-hospital-gowns-for-health-care-workers/)
 
 [WGBH](https://www.wgbh.org/news/local-news/2020/06/08/in-it-together-6-8-2020)
+
+<!--more--> 
+
 
 ## Photos
 ![](disassembled.png)

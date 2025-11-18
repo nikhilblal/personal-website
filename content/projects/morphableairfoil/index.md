@@ -1,5 +1,6 @@
 ---
-title: Morphable Airfoil
+title: Morphable airfoil concept
+date: 2014
 categories: ['cornell']
 template: page
 ---

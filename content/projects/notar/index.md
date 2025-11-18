@@ -1,5 +1,6 @@
 ---
-title: Design of a NOTAR helicopter tail
+title: NOTAR Analysis
+date: 2013
 categories: ['cornell']
 template: page
 ---

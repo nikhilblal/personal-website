@@ -12,10 +12,10 @@
         }
 
         body {
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: Georgia, 'Times New Roman', serif;
             background: white;
             color: #111;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .container {
@@ -215,16 +215,16 @@
             </div>
 
             <!-- Portfolio Items -->
-                                            <a href="/projects/roboticarm/" class="portfolio-box">
+                                                            <a href="/projects/roboticarm/" class="portfolio-box" data-animated=&quot;/assets/roboticarm/gif_conv.gif&quot;>
                     <div class="breathe-ring breathe-ring-1"></div>
                     <div class="breathe-ring breathe-ring-2"></div>
                     <div class="breathe-ring breathe-ring-3"></div>
                     <div class="breathe-ring breathe-ring-4"></div>
                     <div class="portfolio-box-inner">
-                        <img src="/assets/roboticarm/gif_conv.gif" alt="Robotic Arm Weekend Hack" loading="lazy">
+                        <img src="/assets/roboticarm/gif_conv-static.jpg" alt="Rapid robotic arm" loading="lazy">
                     </div>
                 </a>
-                                                            <a href="/projects/ebike/" class="portfolio-box">
+                                                                            <a href="/projects/ebike/" class="portfolio-box" >
                     <div class="breathe-ring breathe-ring-1"></div>
                     <div class="breathe-ring breathe-ring-2"></div>
                     <div class="breathe-ring breathe-ring-3"></div>
@@ -233,34 +233,59 @@
                         <img src="/assets/ebike/BIKE2.jpg" alt="Stealthy electric city bike" loading="lazy">
                     </div>
                 </a>
-                                                            <a href="/projects/jacket/" class="portfolio-box">
+                                                                            <a href="/projects/jacket/" class="portfolio-box" data-animated=&quot;/assets/jacket/breathing.gif&quot;>
                     <div class="breathe-ring breathe-ring-1"></div>
                     <div class="breathe-ring breathe-ring-2"></div>
                     <div class="breathe-ring breathe-ring-3"></div>
                     <div class="breathe-ring breathe-ring-4"></div>
                     <div class="portfolio-box-inner">
-                        <img src="/assets/jacket/breathing.gif" alt="Jacket that pulses with breathing" loading="lazy">
+                        <img src="/assets/jacket/breathing-static.jpg" alt="Heartbeat cycling jacket" loading="lazy">
                     </div>
                 </a>
-                                                            <a href="/projects/covidshield/" class="portfolio-box">
+                                                                            <a href="/projects/covidshield/" class="portfolio-box" >
                     <div class="breathe-ring breathe-ring-1"></div>
                     <div class="breathe-ring breathe-ring-2"></div>
                     <div class="breathe-ring breathe-ring-3"></div>
                     <div class="breathe-ring breathe-ring-4"></div>
                     <div class="portfolio-box-inner">
-                        <img src="/assets/covidshield/shield.jpg" alt="Covid Autoclave Shield" loading="lazy">
+                        <img src="/assets/covidshield/shield.jpg" alt="Covid autoclave shield" loading="lazy">
                     </div>
                 </a>
-                                                            <a href="/projects/cycler/" class="portfolio-box">
+                                                                            <a href="/projects/cycler/" class="portfolio-box" >
                     <div class="breathe-ring breathe-ring-1"></div>
                     <div class="breathe-ring breathe-ring-2"></div>
                     <div class="breathe-ring breathe-ring-3"></div>
                     <div class="breathe-ring breathe-ring-4"></div>
                     <div class="portfolio-box-inner">
-                        <img src="/assets/cycler/closeup2.jpeg" alt="Piezo-resistive Amplified High Speed Pressure Cycler" loading="lazy">
+                        <img src="/assets/cycler/closeup2.jpeg" alt="Record-setting pressure cycler" loading="lazy">
+                    </div>
+                </a>
+                                                                            <a href="/projects/scroller/" class="portfolio-box" data-animated=&quot;/assets/scroller/gif_conv.gif&quot;>
+                    <div class="breathe-ring breathe-ring-1"></div>
+                    <div class="breathe-ring breathe-ring-2"></div>
+                    <div class="breathe-ring breathe-ring-3"></div>
+                    <div class="breathe-ring breathe-ring-4"></div>
+                    <div class="portfolio-box-inner">
+                        <img src="/assets/scroller/gif_conv-static.jpg" alt="Scroller" loading="lazy">
                     </div>
                 </a>
                                     </div>
     </div>
+    <script>
+        // Handle GIF hover animation
+        document.querySelectorAll('.portfolio-box[data-animated]').forEach(box => {
+            const img = box.querySelector('img');
+            const staticSrc = img.src;
+            const animatedSrc = box.getAttribute('data-animated');
+
+            box.addEventListener('mouseenter', () => {
+                img.src = animatedSrc;
+            });
+
+            box.addEventListener('mouseleave', () => {
+                img.src = staticSrc;
+            });
+        });
+    </script>
 </body>
 </html>

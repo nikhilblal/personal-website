@@ -1,5 +1,6 @@
 ---
-title: PLCs for Autonomous Trucks
+title: Robotic arm PLC
+date: 2020
 categories: ['engine']
 featured: false
 template: page

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piezo-resistive Amplified High Speed Pressure Cycler</title>
+    <title>Record-setting pressure cycler</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -19,22 +19,21 @@
     </header>
 
     <main>
-        <article>
-            <header>
-                <h1>Piezo-resistive Amplified High Speed Pressure Cycler</h1>
-                            </header>
+        <article class="project-article">
             <div class="content">
-                <p><img src="HighSpeedHydraulic.jpg" alt=""></p>
+                <p><img src="/assets/cycler/closeup2.jpeg" alt=""></p>
 <h2>Summary</h2>
 <p>I developed a system of pressure cycling that would enable me to high speed pressure cycle far in excess of Sensata’s typical pressure cycling frequencies. Most pressure cycling at Sensata took place &lt;10 Hz, but the cycler I built was capable of cycling at up to 5kHz. A customer approached us with a test that would require 400M cycles. Normally this test would take years to run, and so to save millions of dollars in non-recurring engineering cost, I developed this cycler.</p>
 <p>As an expansion, I was able to run mechanical resonant frequency analysis using the piezo actuator, which enabled Sensata, for the first time, to mechanically characterize the frequency response of a sensor and generate useful data to empirically derive their true mechanical transfer function.</p>
+<!--more-->
 <h2>Photos</h2>
-<p><img src="IMG_3271.JPG" alt="">
+<p><img src="/assets/cycler/IMG_3271.JPG" alt="">
 <em>Fig. 1: Full system in use, visuals of the oscilloscopes, amplifier, electromechanical-fluidic system, and the key innovation of a fluid accumulator that would bleed small amounts of fluid into the system via a repurposed snubber to replenish fluid leaking out past the dynamic piston seal. The snubber served as a pressure barrier, so, despite cycling rapidly on the system side, it would create an artificial pressure wall due to the significant L/d ratio of the micro-orifice. See Pouiseuille’s Law for more details.</em></p>
-<p><img src="closeup2.jpeg" alt="">
+<p><img src="/assets/cycler/closeup2.jpeg" alt="">
 <em>Fig. 2: Close-up of the pressure cycler interface, a 120um displacement stack of ceramic piezoactuators was used to mechanically actuate a piston, displacement induced by 10kV amplitude sine wave. The piston would repeatedly compress a small volume of fluid which the pressure sensor under test and the Kistler reference pressure would simultaneously measure.</em></p>
-<p><img src="Spline1000.jpg" alt="">
+<p><img src="/assets/cycler/Spline1000.jpg" alt="">
 <em>Fig. 3: Following the poster session, I spent time conducting additional testing to gather enough data to normalize the sensor outputs. Each dot on this plot represents a discrete sampling at a particular frequency. A Fast Fourier Transform is conducted on each subset of data at every frequency tested, and the aggregate of every transform is plotted here using a MATLAB script. The digital filtering (Low Pass Filter emulation) built into the ASIC of the Gen4 sensor dampens response compared to the Gen3 ASIC that does not have this feature.</em></p>
+<p><img src="/assets/cycler/HighSpeedHydraulic.jpeg" alt=""></p>
             </div>
         </article>
     </main>
@@ -42,5 +41,87 @@
     <footer>
         <p>&copy; 2025</p>
     </footer>
+
+    <script>
+        const article = document.querySelector('.project-article');
+        const content = document.querySelector('.content');
+        const firstImg = content.querySelector('img');
+
+        // Move title and date below first image
+        if (firstImg) {
+            const header = document.createElement('header');
+            header.className = 'project-header';
+
+            const title = document.createElement('h1');
+            title.textContent = 'Record-setting pressure cycler';
+            header.appendChild(title);
+
+                        const time = document.createElement('time');
+            time.setAttribute('datetime', '2015');
+            time.textContent = '2015';
+            header.appendChild(time);
+            
+            firstImg.parentNode.insertBefore(header, firstImg.nextSibling);
+        }
+
+        // Hide "Summary" and "Photos" headings
+        const headings = content.querySelectorAll('h2');
+        headings.forEach(h => {
+            const text = h.textContent.trim();
+            if (text === 'Summary' || text === 'Photos') {
+                h.style.display = 'none';
+            }
+        });
+
+        // Find content fold marker (<!--more--> becomes an HTML comment)
+        const allNodes = Array.from(content.childNodes);
+        let foldIndex = -1;
+
+        allNodes.forEach((node, i) => {
+            if (node.nodeType === Node.COMMENT_NODE && node.textContent.trim() === 'more') {
+                foldIndex = i;
+            }
+        });
+
+        // If fold marker found, split content
+        if (foldIndex > -1) {
+            const aboveFold = document.createElement('div');
+            aboveFold.className = 'above-fold';
+
+            const belowFold = document.createElement('div');
+            belowFold.className = 'below-fold';
+
+            const indicator = document.createElement('button');
+            indicator.className = 'scroll-indicator';
+            indicator.innerHTML = '<span>↓</span>';
+            indicator.setAttribute('aria-label', 'Show more content');
+
+            // Split content at fold
+            allNodes.forEach((node, i) => {
+                if (i < foldIndex) {
+                    aboveFold.appendChild(node.cloneNode(true));
+                } else if (i > foldIndex) {
+                    belowFold.appendChild(node.cloneNode(true));
+                }
+            });
+
+            // Clear and rebuild
+            content.innerHTML = '';
+            content.appendChild(aboveFold);
+            content.appendChild(indicator);
+            content.appendChild(belowFold);
+
+            // Click to reveal
+            indicator.addEventListener('click', () => {
+                belowFold.classList.add('revealed');
+                indicator.style.opacity = '0';
+
+                // Smooth scroll to revealed content
+                setTimeout(() => {
+                    belowFold.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            });
+        }
+    </script>
 </body>
 </html>

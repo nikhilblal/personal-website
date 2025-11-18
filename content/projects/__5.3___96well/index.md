@@ -1,5 +1,6 @@
 ---
-title: 96 well high thorough-put assay
+title: 96-Well high throughput system
+date: 2021
 categories: ['first']
 featured: false
 template: page

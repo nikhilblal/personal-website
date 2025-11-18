@@ -1,5 +1,6 @@
 ---
-title: Jacket that pulses with breathing
+title: Heartbeat cycling jacket
+date: 2019
 categories: ['projects']
 featured: true
 featuredImage: './breathing.gif'
@@ -10,7 +11,10 @@ frontpage: 4
 
 ## Summary
 
-My friend wanted to go to a light festival, and so we went illuminated. We chose projects the night before and hacked them together. The jacket reflects the breathing of the user; as the wearer's chest expands the lighting intensifies, and conversely, on contraction, the lighting dims. The expansion and contraction were measured by a Force Sensing Resistor (FSR) that I strapped to my chest with the mildly elastic belt I was wearing at the time. As a cyclist I want to remind people I am not just a binary dot hovering in the night: I am a living, breathing human - please do not run me over!
+Built overnight for a light festival, this jacket maps breathing to light intensity: inhalation brightens the LEDs, exhalation dims them. A force-sensing resistor strapped to my chest with an elastic belt captured the expansion and contraction in real time.
+As a cyclist riding at night, the goal was to make my presence unmistakably human rather than just another point of light in traffic.
+
+<!--more--> 
 
 ## Photos
 ![](breathing.gif)

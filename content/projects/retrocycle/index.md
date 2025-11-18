@@ -1,5 +1,6 @@
 ---
-title: 100 year old electric bicycle
+title: Retro cycle
+date: 2018
 categories: ['projects']
 featured: true
 featuredImage: './r2_headlight.jpg'
@@ -10,6 +11,8 @@ template: page
 ## Summary
 
 A work in progress, this is my antique motor-bicycle, originally manufactured for the Charles Williams Stores sometime between 1917-1922, the bike was originally built for a small gas engine. I received the bike without wheels, and a skip tooth chain with an odd-sized pitch (1.1"). I added hand fabricated wheels, laced with a direct drive rear hub from ebikekit and a Sturmey-Archer front drum brake, built a front brake sensor out of a hard drive magnet and a hall effect sensor, used old LiPo batteries from Biobot's samplers, and various other parts I had lying around.
+
+<!--more-->
 
 Parameters | Value
 ----------- | ------------

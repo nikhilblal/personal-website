@@ -12,10 +12,10 @@
         }
 
         body {
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: Georgia, 'Times New Roman', serif;
             background: white;
             color: #111;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .container {
@@ -217,18 +217,35 @@
             <!-- Portfolio Items -->
             <% it.projects.forEach(function(project) { %>
                 <% if (project.images && project.images.length > 0) { %>
-                <a href="<%= project.url %>" class="portfolio-box">
+                <% const img = project.images[0]; %>
+                <a href="<%= project.url %>" class="portfolio-box" <%= img.isGif ? `data-animated="${img.animated}"` : '' %>>
                     <div class="breathe-ring breathe-ring-1"></div>
                     <div class="breathe-ring breathe-ring-2"></div>
                     <div class="breathe-ring breathe-ring-3"></div>
                     <div class="breathe-ring breathe-ring-4"></div>
                     <div class="portfolio-box-inner">
-                        <img src="<%= project.images[0] %>" alt="<%= project.title %>" loading="lazy">
+                        <img src="<%= img.static %>" alt="<%= project.title %>" loading="lazy">
                     </div>
                 </a>
                 <% } %>
             <% }); %>
         </div>
     </div>
+    <script>
+        // Handle GIF hover animation
+        document.querySelectorAll('.portfolio-box[data-animated]').forEach(box => {
+            const img = box.querySelector('img');
+            const staticSrc = img.src;
+            const animatedSrc = box.getAttribute('data-animated');
+
+            box.addEventListener('mouseenter', () => {
+                img.src = animatedSrc;
+            });
+
+            box.addEventListener('mouseleave', () => {
+                img.src = staticSrc;
+            });
+        });
+    </script>
 </body>
 </html>

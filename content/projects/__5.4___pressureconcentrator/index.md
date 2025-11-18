@@ -1,5 +1,6 @@
 ---
-title: Novel field protein concentrator
+title: Field protein concentrator
+date: 2021
 categories: ['first']
 featured: false
 featuredImage: './assembled.jpeg'

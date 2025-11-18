@@ -1,5 +1,6 @@
 ---
-title: Development of android app
+title: App Development
+date: 2019
 categories: ['biobot']
 template: page
 ---

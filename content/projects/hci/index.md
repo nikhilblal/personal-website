@@ -1,5 +1,6 @@
 ---
-title: Pedal that detects foot pressure
+title: Pressure sensitive pedal
+date: 2020
 categories: ['engine']
 featured: false
 featuredImage: './closeup.jpg'

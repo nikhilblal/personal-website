@@ -1,5 +1,6 @@
 ---
-title: Covid swab
+title: 3d Printable nasal swabs
+date: 2021
 categories: ['engine']
 featured: false
 featuredImage: './swab.jpg'

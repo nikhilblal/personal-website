@@ -1,5 +1,6 @@
 ---
-title: Flopper the Frog, novel use of foamed silicones for a children's toy
+title: Flopper the Frog
+date: 2014
 categories: ['cornell']
 featuredImage: './img2.jpg'
 featured: false

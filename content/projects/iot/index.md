@@ -1,5 +1,6 @@
 ---
 title: Subterranean cellular connected device
+date: 2018
 categories: ['biobot']
 featured: false
 featuredImage: './IMG_2692B.JPEG'

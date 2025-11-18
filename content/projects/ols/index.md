@@ -1,5 +1,5 @@
 ---
-title: Autonomous vehicle sensor development
+title: Autonomous vehicle sensor dev
 categories: ['sensata']
 featuredImage: './corona3.jpg'
 featured: true

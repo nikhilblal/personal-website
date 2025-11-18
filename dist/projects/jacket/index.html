@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jacket that pulses with breathing</title>
+    <title>Heartbeat cycling jacket</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -19,22 +19,21 @@
     </header>
 
     <main>
-        <article>
-            <header>
-                <h1>Jacket that pulses with breathing</h1>
-                            </header>
+        <article class="project-article">
             <div class="content">
-                <p><img src="riding.gif" alt=""></p>
+                <p><img src="/assets/jacket/riding.gif" alt=""></p>
 <h2>Summary</h2>
-<p>My friend wanted to go to a light festival, and so we went illuminated. We chose projects the night before and hacked them together. The jacket reflects the breathing of the user; as the wearer’s chest expands the lighting intensifies, and conversely, on contraction, the lighting dims. The expansion and contraction were measured by a Force Sensing Resistor (FSR) that I strapped to my chest with the mildly elastic belt I was wearing at the time. As a cyclist I want to remind people I am not just a binary dot hovering in the night: I am a living, breathing human - please do not run me over!</p>
+<p>Built overnight for a light festival, this jacket maps breathing to light intensity: inhalation brightens the LEDs, exhalation dims them. A force-sensing resistor strapped to my chest with an elastic belt captured the expansion and contraction in real time.
+As a cyclist riding at night, the goal was to make my presence unmistakably human rather than just another point of light in traffic.</p>
+<!--more--> 
 <h2>Photos</h2>
-<p><img src="breathing.gif" alt=""></p>
+<p><img src="/assets/jacket/breathing.gif" alt=""></p>
 <p><em>Fig. 1: Breathing in and out, early prototype using addressable LEDs and a Teensy 3.2 to control them</em></p>
-<p><img src="circuit.JPEG" alt="">
+<p><img src="/assets/jacket/circuit.JPEG" alt="">
 <em>Fig. 2: Circuit design, did not include voltage cutoff for battery, really should have, BUT I used a 3Ah battery that had plenty of energy for the duration of the event.</em></p>
-<p><img src="IMG_4585.JPEG" alt="">
+<p><img src="/assets/jacket/IMG_4585.JPEG" alt="">
 <em>Fig. 3: Completed circuit</em></p>
-<p><img src="IMG_4599.JPEG" alt="">
+<p><img src="/assets/jacket/IMG_4599.JPEG" alt="">
 <em>Fig. 4: Jason Chrisos and I at the festival, pictured: <a href="https://niklal.me/ebike/">Electric Bike Project</a></em></p>
             </div>
         </article>
@@ -43,5 +42,87 @@
     <footer>
         <p>&copy; 2025</p>
     </footer>
+
+    <script>
+        const article = document.querySelector('.project-article');
+        const content = document.querySelector('.content');
+        const firstImg = content.querySelector('img');
+
+        // Move title and date below first image
+        if (firstImg) {
+            const header = document.createElement('header');
+            header.className = 'project-header';
+
+            const title = document.createElement('h1');
+            title.textContent = 'Heartbeat cycling jacket';
+            header.appendChild(title);
+
+                        const time = document.createElement('time');
+            time.setAttribute('datetime', '2019');
+            time.textContent = '2019';
+            header.appendChild(time);
+            
+            firstImg.parentNode.insertBefore(header, firstImg.nextSibling);
+        }
+
+        // Hide "Summary" and "Photos" headings
+        const headings = content.querySelectorAll('h2');
+        headings.forEach(h => {
+            const text = h.textContent.trim();
+            if (text === 'Summary' || text === 'Photos') {
+                h.style.display = 'none';
+            }
+        });
+
+        // Find content fold marker (<!--more--> becomes an HTML comment)
+        const allNodes = Array.from(content.childNodes);
+        let foldIndex = -1;
+
+        allNodes.forEach((node, i) => {
+            if (node.nodeType === Node.COMMENT_NODE && node.textContent.trim() === 'more') {
+                foldIndex = i;
+            }
+        });
+
+        // If fold marker found, split content
+        if (foldIndex > -1) {
+            const aboveFold = document.createElement('div');
+            aboveFold.className = 'above-fold';
+
+            const belowFold = document.createElement('div');
+            belowFold.className = 'below-fold';
+
+            const indicator = document.createElement('button');
+            indicator.className = 'scroll-indicator';
+            indicator.innerHTML = '<span>↓</span>';
+            indicator.setAttribute('aria-label', 'Show more content');
+
+            // Split content at fold
+            allNodes.forEach((node, i) => {
+                if (i < foldIndex) {
+                    aboveFold.appendChild(node.cloneNode(true));
+                } else if (i > foldIndex) {
+                    belowFold.appendChild(node.cloneNode(true));
+                }
+            });
+
+            // Clear and rebuild
+            content.innerHTML = '';
+            content.appendChild(aboveFold);
+            content.appendChild(indicator);
+            content.appendChild(belowFold);
+
+            // Click to reveal
+            indicator.addEventListener('click', () => {
+                belowFold.classList.add('revealed');
+                indicator.style.opacity = '0';
+
+                // Smooth scroll to revealed content
+                setTimeout(() => {
+                    belowFold.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            });
+        }
+    </script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 ---
 title: The Interesting Company, Intumister
+date: 2018
 categories: ['projects']
 template: page
 ---

@@ -1,5 +1,6 @@
 ---
-title: Liquid Metal Pump
+title: Metal pump
+date: 2013
 categories: ['cornell']
 template: page
 ---

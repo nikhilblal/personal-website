@@ -1,5 +1,6 @@
 ---
-title: Development of a cheap, low flow pump
+title: DIY 3D printable pump
+date: 2018
 categories: ['projects']
 featured: true
 featuredImage: './IMG_4751.JPEG'

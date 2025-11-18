@@ -1,5 +1,6 @@
 ---
-title: High load manhole lifter
+title: Manual lifter
+date: 2019
 categories: ['biobot']
 template: page
 ---

@@ -1,5 +1,6 @@
 ---
-title: Passive sampler alternative to 'box'
+title: POCIS development
+date: 2019
 categories: ['first']
 template: page
 ---

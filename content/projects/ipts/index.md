@@ -1,5 +1,5 @@
 ---
-title: Integrated Pressure Temperature Sensor for Hermetic Under-hood Fuel Applications
+title: Integrated Pressure Temperature Sensor (IPTS)
 categories: ['sensata']
 template: page
 ---

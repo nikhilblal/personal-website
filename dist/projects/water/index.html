@@ -19,10 +19,7 @@
     </header>
 
     <main>
-        <article>
-            <header>
-                <h1>The Interesting Company, Intumister</h1>
-                            </header>
+        <article class="project-article">
             <div class="content">
                 <div class="video-embed">
       <iframe
@@ -35,11 +32,11 @@
 <h2>Summary</h2>
 <p>A scorching hot day in Providence, RI, the Fox Point Booters had a game to play! Talking about it ahead of time with some of the other members, we discussed bringing water guns to the field to hose each other off. Instead I decided to make a misting cannon out of two off the shelf components, a leaf blower and a chemical sprayer, and then deploy it on 3rd base. The Intumister is a portmanteau of “Intumescent” + “Mister”. Some might say it works as an evaporative cooler, but not in the traditional sense as the moisture does not fully vaporize at the outlet and instead is deposited as artificial sweat. The artificial sweat is then fully evaporated on your skin for conductive cooling, making it more effective then just blowing cool air, which would be purely forced convective cooling.</p>
 <h2>Photos</h2>
-<p><img src="flamethrower.jpeg" alt="">
+<p><img src="/assets/water/flamethrower.jpeg" alt="">
 <em>Fig. 1: The nemesis</em></p>
-<p><img src="water.jpeg" alt="">
+<p><img src="/assets/water/water.jpeg" alt="">
 <em>Fig. 2: Ryobi Cordless Chemical Sprayer</em></p>
-<p><img src="blower.jpeg" alt="">
+<p><img src="/assets/water/blower.jpeg" alt="">
 <em>Fig. 3: Ryobi Cordless Leaf Blower</em></p>
             </div>
         </article>
@@ -48,5 +45,87 @@
     <footer>
         <p>&copy; 2025</p>
     </footer>
+
+    <script>
+        const article = document.querySelector('.project-article');
+        const content = document.querySelector('.content');
+        const firstImg = content.querySelector('img');
+
+        // Move title and date below first image
+        if (firstImg) {
+            const header = document.createElement('header');
+            header.className = 'project-header';
+
+            const title = document.createElement('h1');
+            title.textContent = 'The Interesting Company, Intumister';
+            header.appendChild(title);
+
+                        const time = document.createElement('time');
+            time.setAttribute('datetime', '2018');
+            time.textContent = '2018';
+            header.appendChild(time);
+            
+            firstImg.parentNode.insertBefore(header, firstImg.nextSibling);
+        }
+
+        // Hide "Summary" and "Photos" headings
+        const headings = content.querySelectorAll('h2');
+        headings.forEach(h => {
+            const text = h.textContent.trim();
+            if (text === 'Summary' || text === 'Photos') {
+                h.style.display = 'none';
+            }
+        });
+
+        // Find content fold marker (<!--more--> becomes an HTML comment)
+        const allNodes = Array.from(content.childNodes);
+        let foldIndex = -1;
+
+        allNodes.forEach((node, i) => {
+            if (node.nodeType === Node.COMMENT_NODE && node.textContent.trim() === 'more') {
+                foldIndex = i;
+            }
+        });
+
+        // If fold marker found, split content
+        if (foldIndex > -1) {
+            const aboveFold = document.createElement('div');
+            aboveFold.className = 'above-fold';
+
+            const belowFold = document.createElement('div');
+            belowFold.className = 'below-fold';
+
+            const indicator = document.createElement('button');
+            indicator.className = 'scroll-indicator';
+            indicator.innerHTML = '<span>↓</span>';
+            indicator.setAttribute('aria-label', 'Show more content');
+
+            // Split content at fold
+            allNodes.forEach((node, i) => {
+                if (i < foldIndex) {
+                    aboveFold.appendChild(node.cloneNode(true));
+                } else if (i > foldIndex) {
+                    belowFold.appendChild(node.cloneNode(true));
+                }
+            });
+
+            // Clear and rebuild
+            content.innerHTML = '';
+            content.appendChild(aboveFold);
+            content.appendChild(indicator);
+            content.appendChild(belowFold);
+
+            // Click to reveal
+            indicator.addEventListener('click', () => {
+                belowFold.classList.add('revealed');
+                indicator.style.opacity = '0';
+
+                // Smooth scroll to revealed content
+                setTimeout(() => {
+                    belowFold.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            });
+        }
+    </script>
 </body>
 </html>

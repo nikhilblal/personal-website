@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Design of a NOTAR helicopter tail</title>
+    <title>NOTAR Analysis</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -19,10 +19,7 @@
     </header>
 
     <main>
-        <article>
-            <header>
-                <h1>Design of a NOTAR helicopter tail</h1>
-                            </header>
+        <article class="project-article">
             <div class="content">
                 <h4>Teammates:</h4>
 <p>Ben Sands, Wenyu Zhou</p>
@@ -32,11 +29,11 @@
 <p>For the final project of MAE 5230: Intermediate Fluid Dynamics, we had an interesting and fun project presented: design a NOTAR aircraft tail using tools from the semester. Based on prior experience working with novel airfoils, it was a welcome opportunity to dive deep in FLUENT to solve a real world design challenge.</p>
 <p>From the Abstract: “No tail rotor aircraft (NOTAR), ﬁrst developed by McDonnell Douglas can be implemented in a couple of different manners. Our design objective was to generate a normalized force coefﬁcient (CL) 0.2 with a neutral, unactuated tail shape using a combination of varied tail geometry and jet actuation. The actuation could then reduce or increase the CL dependent on jet velocity by pilot interaction. The jets themselves cause or mitigate boundary layer separation at speciﬁc locations along the cross sectional wall of the tail rotor, which in turn result in increased lift or reduced lift while attempting to minimize the amount of parasitic drag. We derived a tail rotor from ample iteration that maintained an unactuated normalized side force of 0.2 with the ability to actuate this force between a of CL 0 and 0.4 using the air jets.”</p>
 <h2>Photos</h2>
-<p><img src="chart1.png" alt="">
+<p><img src="/assets/notar/chart1.png" alt="">
 <em>Fig. 1: Relation of the coefficient of lift (C_L) to free stream velocity, generated from the camber data and simulated air flow</em></p>
-<p><img src="airfoil2.png" alt="airfoil, no lift">
+<p><img src="/assets/notar/airfoil2.png" alt="airfoil, no lift">
 <em>Fig. 2: NOTAR helicopter camber projection, no lift</em></p>
-<p><img src="airfoil3.png" alt="airfoil, lift">
+<p><img src="/assets/notar/airfoil3.png" alt="airfoil, lift">
 <em>Fig. 3: NOTAR helicopter camber projection, lift</em></p>
             </div>
         </article>
@@ -45,5 +42,87 @@
     <footer>
         <p>&copy; 2025</p>
     </footer>
+
+    <script>
+        const article = document.querySelector('.project-article');
+        const content = document.querySelector('.content');
+        const firstImg = content.querySelector('img');
+
+        // Move title and date below first image
+        if (firstImg) {
+            const header = document.createElement('header');
+            header.className = 'project-header';
+
+            const title = document.createElement('h1');
+            title.textContent = 'NOTAR Analysis';
+            header.appendChild(title);
+
+                        const time = document.createElement('time');
+            time.setAttribute('datetime', '2013');
+            time.textContent = '2013';
+            header.appendChild(time);
+            
+            firstImg.parentNode.insertBefore(header, firstImg.nextSibling);
+        }
+
+        // Hide "Summary" and "Photos" headings
+        const headings = content.querySelectorAll('h2');
+        headings.forEach(h => {
+            const text = h.textContent.trim();
+            if (text === 'Summary' || text === 'Photos') {
+                h.style.display = 'none';
+            }
+        });
+
+        // Find content fold marker (<!--more--> becomes an HTML comment)
+        const allNodes = Array.from(content.childNodes);
+        let foldIndex = -1;
+
+        allNodes.forEach((node, i) => {
+            if (node.nodeType === Node.COMMENT_NODE && node.textContent.trim() === 'more') {
+                foldIndex = i;
+            }
+        });
+
+        // If fold marker found, split content
+        if (foldIndex > -1) {
+            const aboveFold = document.createElement('div');
+            aboveFold.className = 'above-fold';
+
+            const belowFold = document.createElement('div');
+            belowFold.className = 'below-fold';
+
+            const indicator = document.createElement('button');
+            indicator.className = 'scroll-indicator';
+            indicator.innerHTML = '<span>↓</span>';
+            indicator.setAttribute('aria-label', 'Show more content');
+
+            // Split content at fold
+            allNodes.forEach((node, i) => {
+                if (i < foldIndex) {
+                    aboveFold.appendChild(node.cloneNode(true));
+                } else if (i > foldIndex) {
+                    belowFold.appendChild(node.cloneNode(true));
+                }
+            });
+
+            // Clear and rebuild
+            content.innerHTML = '';
+            content.appendChild(aboveFold);
+            content.appendChild(indicator);
+            content.appendChild(belowFold);
+
+            // Click to reveal
+            indicator.addEventListener('click', () => {
+                belowFold.classList.add('revealed');
+                indicator.style.opacity = '0';
+
+                // Smooth scroll to revealed content
+                setTimeout(() => {
+                    belowFold.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            });
+        }
+    </script>
 </body>
 </html>

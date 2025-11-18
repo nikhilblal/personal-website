@@ -1,5 +1,6 @@
 ---
-title: BikeSto, a city planning company idea
+title: Bikesto
+date: 2013
 categories: ['cornell']
 template: page
 ---

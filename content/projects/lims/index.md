@@ -1,5 +1,6 @@
 ---
-title: Wingmill Energy Harvesting, novel wind energy harvesting device
+title: LIMS Low-speed Inverted Windmill
+date: 2012
 categories: ['cornell']
 featuredImage: './CURB_Spring13_Poster.JPEG'
 featured: false

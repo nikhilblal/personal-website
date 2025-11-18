@@ -1,5 +1,6 @@
 ---
-title:  Founding of the Rapid Prototyping Lab (inspired by fab lab)
+title: Founding of the Rapid Prototyping Lab
+date: 2013
 categories: ['cornell']
 featuredImage: './lab.jpg'
 featured: true
