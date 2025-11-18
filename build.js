@@ -161,14 +161,23 @@ async function processMarkdownFile(filePath, contentDir, distDir) {
   const content = await fs.readFile(filePath, 'utf8');
   const { data: frontmatter, content: markdown } = matter(content);
 
+  // Get project name for asset path rewriting
+  const relativePath = path.relative(contentDir, filePath);
+  const parsedPath = path.parse(relativePath);
+  const projectName = parsedPath.dir.split(path.sep)[1]; // e.g., "projects/covidshield" -> "covidshield"
+
   // Process YouTube shortcodes before markdown rendering
-  const processedMarkdown = processYouTubeShortcodes(markdown);
+  let processedMarkdown = processYouTubeShortcodes(markdown);
+
+  // Rewrite relative image paths to use /assets/ directory
+  if (projectName) {
+    processedMarkdown = processedMarkdown.replace(/!\[(.*?)\]\(\.\/([^)]+)\)/g, `![$1](/assets/${projectName}/$2)`);
+    processedMarkdown = processedMarkdown.replace(/!\[(.*?)\]\((?!http|\/assets)([^)]+)\)/g, `![$1](/assets/${projectName}/$2)`);
+  }
+
   const html = md.render(processedMarkdown);
 
   // Generate output path
-  const relativePath = path.relative(contentDir, filePath);
-  const parsedPath = path.parse(relativePath);
-
   let outputPath;
   if (parsedPath.name === 'index') {
     outputPath = path.join(distDir, parsedPath.dir, 'index.html');
@@ -179,32 +188,6 @@ async function processMarkdownFile(filePath, contentDir, distDir) {
   // Ensure output directory exists
   const outputDir = path.dirname(outputPath);
   await ensureDir(outputDir);
-
-  // Copy assets from the same directory as the markdown file
-  const markdownDir = path.dirname(filePath);
-  const files = await fs.readdir(markdownDir);
-
-  for (const file of files) {
-    if (file !== 'index.md') {
-      const srcAsset = path.join(markdownDir, file);
-      const destAsset = path.join(outputDir, file);
-
-      try {
-        const stat = await fs.stat(srcAsset);
-        if (stat.isFile()) {
-          // Skip large video files to reduce build size
-          const ext = path.extname(file).toLowerCase();
-          if (['.mp4', '.mov', '.avi', '.wmv'].includes(ext)) {
-            console.log(`Skipping large video file: ${srcAsset}`);
-            continue;
-          }
-          await optimizeImage(srcAsset, destAsset);
-        }
-      } catch (err) {
-        // File might not exist or be inaccessible
-      }
-    }
-  }
 
   // Render with template
   const pageData = {
