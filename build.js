@@ -145,13 +145,44 @@ async function copyAssets() {
       const stat = await fs.stat(srcPath);
       if (stat.isFile()) {
         await optimizeImage(srcPath, distPath);
-      } else if (stat.isDirectory() && file === 'assets') {
-        // Copy all assets recursively
-        await copyDirectory(srcPath, path.join(distDir, 'assets'));
       }
     }
   } catch (err) {
     // src directory might not exist yet
+  }
+
+  // Copy project assets from content/projects to dist/assets
+  await copyProjectAssets();
+}
+
+async function copyProjectAssets() {
+  const projectsDir = path.join(__dirname, 'content', 'projects');
+  const distAssetsDir = path.join(__dirname, 'dist', 'assets');
+
+  try {
+    const projectDirs = await fs.readdir(projectsDir, { withFileTypes: true });
+
+    for (const dir of projectDirs) {
+      if (dir.isDirectory()) {
+        const projectPath = path.join(projectsDir, dir.name);
+        const destPath = path.join(distAssetsDir, dir.name);
+
+        // Copy all non-markdown files from project directory
+        const entries = await fs.readdir(projectPath, { withFileTypes: true });
+
+        for (const entry of entries) {
+          if (!entry.isDirectory() && !entry.name.endsWith('.md')) {
+            const srcFile = path.join(projectPath, entry.name);
+            const destFile = path.join(destPath, entry.name);
+
+            await ensureDir(destPath);
+            await optimizeImage(srcFile, destFile);
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Error copying project assets:', err);
   }
 }
 
