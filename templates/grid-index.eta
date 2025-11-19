@@ -218,7 +218,7 @@
             <% it.projects.forEach(function(project) { %>
                 <% if (project.images && project.images.length > 0) { %>
                 <% const img = project.images[0]; %>
-                <a href="<%= project.url %>" class="portfolio-box" <%= img.isGif ? `data-animated="${img.animated}"` : '' %>>
+                <a href="<%= project.url %>" class="portfolio-box" <%~ img.isGif ? `data-animated="${img.animated}"` : '' %>>
                     <div class="breathe-ring breathe-ring-1"></div>
                     <div class="breathe-ring breathe-ring-2"></div>
                     <div class="breathe-ring breathe-ring-3"></div>
