@@ -12,7 +12,7 @@ frontpage: 2
 
 ## Summary
 
-A concealed, lightweight electric bicycle built around an unusually high 60 V system — a voltage more typical of e-motorcycles. Powered by a compact 16s1p LiPo pack and a modified Infineon controller with IRFB4110 MOSFETs, the bike briefly reached 1500 W before clutch slip and rider sanity set the limit; daily use is capped at 18 A to protect a motor rated for 10 A continuous. The stealth packaging, upright riding position, and silent acceleration created the uncanny impression of a normal bike moving impossibly fast through traffic.
+A concealed, lightweight electric bicycle built around an unusually high 60 V system — a voltage more typical of e-motorcycles. Powered by a compact 16s1p LiPo pack and a modified Infineon controller with IRFB4110 MOSFETs, the bike briefly reached 1500 W before clutch slip and rider sanity set the limit; daily use is capped at 18 A to protect a motor rated for 10 A continuous. The stealth packaging, upright riding position, and silent acceleration created the uncanny impression of a normal bike moving uncomfortably fast through traffic.
 
 `youtube: fR6uySCIAOo`
 

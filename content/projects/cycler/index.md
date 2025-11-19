@@ -11,9 +11,10 @@ frontpage: 6
 
 ## Summary
 
-I developed a system of pressure cycling that would enable me to high speed pressure cycle far in excess of Sensata's typical pressure cycling frequencies. Most pressure cycling at Sensata took place <10 Hz, but the cycler I built was capable of cycling at up to 5kHz. A customer approached us with a test that would require 400M cycles. Normally this test would take years to run, and so to save millions of dollars in non-recurring engineering cost, I developed this cycler.
+## **High-Frequency Pressure Cycling System**
+Sensata’s standard pressure-cycling operated at **<10 Hz**, making a 400-million-cycle qualification test a **462-day** effort that consumed **>\$500k** in testing resources. I developed a pressure cycler capable of **5 kHz**, reducing that same test to **under a day** and bringing the cost down to roughly the **\$10k NRE** for the setup. Scaled across the hundreds of pressure-sensor validations performed each year, the system represented **millions in potential savings**.
 
-As an expansion, I was able to run mechanical resonant frequency analysis using the piezo actuator, which enabled Sensata, for the first time, to mechanically characterize the frequency response of a sensor and generate useful data to empirically derive their true mechanical transfer function.
+Using the same piezo actuator, I extended the platform to run **mechanical resonance and frequency-response analysis**, allowing Sensata to empirically determine true mechanical transfer functions for their sensors for the **first time** (see below).
 
 <!--more-->
 
