@@ -3,6 +3,8 @@ title: Morphable airfoil concept
 date: 2014
 categories: ['cornell']
 template: page
+featured: false
+
 ---
 
 `youtube: WSTw8pgNREs`

@@ -3,6 +3,8 @@ title: Mystery of the high voltage generator
 date: 2018
 categories: ['projects']
 template: page
+featured: false
+
 ---
 ## Summary
 

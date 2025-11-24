@@ -1,6 +1,6 @@
 ---
 title: Retro cycle
-date: 2018
+date: 2020
 categories: ['projects']
 featured: true
 featuredImage: './r2_headlight.jpg'

@@ -3,12 +3,17 @@ title: NOTAR Analysis
 date: 2013
 categories: ['cornell']
 template: page
+featured: true
+featuredImage: './airfoil2.png'
+
 ---
+<!--
 #### Teammates:
 Ben Sands, Wenyu Zhou
 
 #### Professor:
 Olivier Desjardins
+-->
 
 ## Summary
 

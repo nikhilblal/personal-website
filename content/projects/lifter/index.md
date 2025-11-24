@@ -3,6 +3,8 @@ title: Manual lifter
 date: 2019
 categories: ['biobot']
 template: page
+featured: false
+
 ---
 
 `youtube: Wc-Hrvxtb8I`

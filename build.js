@@ -132,10 +132,64 @@ async function optimizeImage(srcPath, destPath) {
   }
 }
 
+async function collectReferencedImages() {
+  const projectsDir = path.join(__dirname, 'content', 'projects');
+  const referencedImages = new Map(); // Map of projectName -> Set of image filenames
+
+  try {
+    const projectDirs = await fs.readdir(projectsDir, { withFileTypes: true });
+
+    for (const dir of projectDirs) {
+      if (dir.isDirectory()) {
+        const projectPath = path.join(projectsDir, dir.name, 'index.md');
+        const images = new Set();
+
+        try {
+          const content = await fs.readFile(projectPath, 'utf8');
+          const { data: frontmatter, content: markdown } = matter(content);
+
+          // Add featuredImage if present
+          if (frontmatter.featuredImage) {
+            let imagePath = frontmatter.featuredImage;
+            // Extract just the filename
+            const filename = imagePath.startsWith('./') ? imagePath.slice(2) : path.basename(imagePath);
+            images.add(filename);
+          }
+
+          // Extract all image references from markdown
+          const imageRegex = /!\[.*?\]\((.*?)\)/g;
+          let match;
+
+          while ((match = imageRegex.exec(markdown)) !== null) {
+            let imagePath = match[1];
+            // Skip external URLs
+            if (!imagePath.startsWith('http')) {
+              // Extract just the filename
+              const filename = imagePath.startsWith('./') ? imagePath.slice(2) : path.basename(imagePath);
+              images.add(filename);
+            }
+          }
+
+          if (images.size > 0) {
+            referencedImages.set(dir.name, images);
+          }
+        } catch (err) {
+          // Skip if no index.md
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Error collecting referenced images:', err);
+  }
+
+  return referencedImages;
+}
+
 async function copyAssets() {
   const srcDir = path.join(__dirname, 'src');
   const distDir = path.join(__dirname, 'dist');
 
+  // Copy from src/ to dist/
   try {
     const files = await fs.readdir(srcDir);
     for (const file of files) {
@@ -151,13 +205,33 @@ async function copyAssets() {
     // src directory might not exist yet
   }
 
-  // Copy project assets from content/projects to dist/assets
-  await copyProjectAssets();
+  // Copy from images/ to dist/assets/
+  const imagesDir = path.join(__dirname, 'images');
+  const assetsDir = path.join(distDir, 'assets');
+
+  try {
+    await ensureDir(assetsDir);
+    const files = await fs.readdir(imagesDir);
+    for (const file of files) {
+      const srcPath = path.join(imagesDir, file);
+      const distPath = path.join(assetsDir, file);
+
+      const stat = await fs.stat(srcPath);
+      if (stat.isFile()) {
+        await optimizeImage(srcPath, distPath);
+      }
+    }
+  } catch (err) {
+    // images directory might not exist
+  }
 }
 
-async function copyProjectAssets() {
+async function copyProjectAssets(referencedImages) {
   const projectsDir = path.join(__dirname, 'content', 'projects');
   const distAssetsDir = path.join(__dirname, 'dist', 'assets');
+
+  let copiedCount = 0;
+  let skippedCount = 0;
 
   try {
     const projectDirs = await fs.readdir(projectsDir, { withFileTypes: true });
@@ -166,21 +240,31 @@ async function copyProjectAssets() {
       if (dir.isDirectory()) {
         const projectPath = path.join(projectsDir, dir.name);
         const destPath = path.join(distAssetsDir, dir.name);
+        const projectImages = referencedImages.get(dir.name);
 
-        // Copy all non-markdown files from project directory
-        const entries = await fs.readdir(projectPath, { withFileTypes: true });
+        // Skip projects with no referenced images
+        if (!projectImages || projectImages.size === 0) {
+          continue;
+        }
 
-        for (const entry of entries) {
-          if (!entry.isDirectory() && !entry.name.endsWith('.md')) {
-            const srcFile = path.join(projectPath, entry.name);
-            const destFile = path.join(destPath, entry.name);
+        // Only copy referenced images
+        for (const imageName of projectImages) {
+          const srcFile = path.join(projectPath, imageName);
+          const destFile = path.join(destPath, imageName);
 
+          try {
             await ensureDir(destPath);
             await optimizeImage(srcFile, destFile);
+            copiedCount++;
+          } catch (err) {
+            console.log(`Warning: Could not copy ${imageName} from ${dir.name}`);
+            skippedCount++;
           }
         }
       }
     }
+
+    console.log(`Optimized ${copiedCount} referenced images, skipped ${skippedCount} missing`);
   } catch (err) {
     console.error('Error copying project assets:', err);
   }
@@ -257,7 +341,6 @@ async function processMarkdownFile(filePath, contentDir, distDir) {
 async function collectProjectImages() {
   const contentDir = path.join(__dirname, 'content');
   const projects = [];
-  const frontpageNumbers = new Set();
 
   // Scan all project directories
   const projectsDir = path.join(contentDir, 'projects');
@@ -271,20 +354,26 @@ async function collectProjectImages() {
         const content = await fs.readFile(projectPath, 'utf8');
         const { data: frontmatter, content: markdown } = matter(content);
 
-        // Only include projects with a frontpage field and not explicitly marked as featured: false
-        if (frontmatter.frontpage !== undefined && frontmatter.featured !== false) {
-          const frontpageNum = frontmatter.frontpage;
-
-          // Validate frontpage number
-          if (!Number.isInteger(frontpageNum) || frontpageNum < 1 || frontpageNum > 7) {
-            throw new Error(`Project "${dir.name}" has invalid frontpage value: ${frontpageNum}. Must be an integer between 1 and 7.`);
+        // Only include projects with a date field and not explicitly marked as featured: false
+        if (frontmatter.date !== undefined && frontmatter.featured !== false) {
+          // Extract year from date field (handles formats like "2025", "2024-01-01", etc.)
+          let year;
+          if (typeof frontmatter.date === 'number') {
+            year = frontmatter.date;
+          } else if (typeof frontmatter.date === 'string') {
+            const parsed = parseInt(frontmatter.date.split('-')[0]);
+            year = isNaN(parsed) ? null : parsed;
+          } else if (frontmatter.date instanceof Date) {
+            year = frontmatter.date.getFullYear();
+          } else {
+            year = null;
           }
 
-          // Check for duplicates
-          if (frontpageNumbers.has(frontpageNum)) {
-            throw new Error(`Duplicate frontpage number ${frontpageNum} found in project "${dir.name}". Each project must have a unique frontpage number.`);
+          // Skip projects without a valid year
+          if (!year) {
+            console.log(`Skipping project "${dir.name}": invalid date format`);
+            continue;
           }
-          frontpageNumbers.add(frontpageNum);
 
           const images = [];
 
@@ -337,22 +426,19 @@ async function collectProjectImages() {
               title: frontmatter.title || dir.name,
               images: processedImages,
               url: `/projects/${dir.name}/`,
-              frontpage: frontpageNum
+              year: year
             });
           }
         }
       } catch (err) {
-        // Re-throw validation errors
-        if (err.message.includes('frontpage')) {
-          throw err;
-        }
         // Skip if no index.md or other error
+        console.log(`Error processing project "${dir.name}":`, err.message);
       }
     }
   }
 
-  // Sort by frontpage number
-  projects.sort((a, b) => a.frontpage - b.frontpage);
+  // Sort by year (descending - most recent first)
+  projects.sort((a, b) => b.year - a.year);
 
   return projects;
 }
@@ -380,39 +466,15 @@ async function build(isWatchMode = false) {
   }
   await ensureDir(distDir);
 
-  // Copy assets
+  // Collect which images are actually referenced in markdown
+  console.log('Scanning markdown for referenced images...');
+  const referencedImages = await collectReferencedImages();
+
+  // Copy src assets
   await copyAssets();
 
-  // Copy all project assets to main assets directory
-  const projectsDir = path.join(contentDir, 'projects');
-  const assetsDir = path.join(distDir, 'assets');
-  await ensureDir(assetsDir);
-
-  try {
-    const projectDirs = await fs.readdir(projectsDir, { withFileTypes: true });
-
-    for (const dir of projectDirs) {
-      if (dir.isDirectory()) {
-        const projectDir = path.join(projectsDir, dir.name);
-        const projectAssetDir = path.join(assetsDir, dir.name);
-
-        // Copy all non-markdown files from project directory
-        const files = await fs.readdir(projectDir, { withFileTypes: true });
-
-        for (const file of files) {
-          if (!file.name.endsWith('.md') && file.isFile()) {
-            await ensureDir(projectAssetDir);
-            await optimizeImage(
-              path.join(projectDir, file.name),
-              path.join(projectAssetDir, file.name)
-            );
-          }
-        }
-      }
-    }
-  } catch (err) {
-    // Projects directory might not exist
-  }
+  // Copy only referenced project assets
+  await copyProjectAssets(referencedImages);
 
   // Auto-generate missing project index.md files
   async function generateMissingProjectPages() {

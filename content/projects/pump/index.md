@@ -2,7 +2,7 @@
 title: DIY 3D printable pump
 date: 2018
 categories: ['projects']
-featured: true
+featured: false
 featuredImage: './IMG_4751.JPEG'
 template: page
 ---

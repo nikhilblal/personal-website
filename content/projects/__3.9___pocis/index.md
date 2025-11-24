@@ -3,6 +3,7 @@ title: POCIS development
 date: 2019
 categories: ['first']
 template: page
+featured: false
 ---
 `youtube: oLlYg-b9A_Q`
 

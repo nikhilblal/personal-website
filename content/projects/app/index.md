@@ -3,6 +3,8 @@ title: App Development
 date: 2019
 categories: ['biobot']
 template: page
+featured: false
+
 ---
 #### Role
 Supervisor & Manager

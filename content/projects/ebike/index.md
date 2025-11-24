@@ -3,7 +3,7 @@ title: Stealthy electric city bike
 date: 2018
 categories: ['projects']
 featured: true
-featuredImage: './BIKE2.jpg'
+featuredImage: './ebike4.JPEG'
 template: page
 frontpage: 2
 ---

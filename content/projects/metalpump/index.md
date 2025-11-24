@@ -3,6 +3,7 @@ title: Metal pump
 date: 2013
 categories: ['cornell']
 template: page
+featured: false
 ---
 
 `youtube: 18qFsnMU8zE`

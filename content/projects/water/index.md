@@ -3,6 +3,8 @@ title: The Interesting Company, Intumister
 date: 2018
 categories: ['projects']
 template: page
+featured: false
+
 ---
 `youtube: D8L9ttLUJa8`
 

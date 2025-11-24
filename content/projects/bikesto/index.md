@@ -3,6 +3,8 @@ title: Bikesto
 date: 2013
 categories: ['cornell']
 template: page
+featured: false
+
 ---
 #### Teammates:
 Kevin Soulard, Robert McBride, Michael Romanko
