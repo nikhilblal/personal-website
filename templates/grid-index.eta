@@ -27,9 +27,10 @@
             max-width: 1600px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 370px));
+            grid-template-columns: repeat(auto-fit, 270px);
             gap: 2.5rem;
             justify-content: center;
+            transition: grid-template-columns 0.3s ease;
         }
 
         /* Info Box */
@@ -46,7 +47,7 @@
             transition: background-color 0.3s ease;
             overflow: hidden;
             position: relative;
-            min-width: 300px;
+            min-width: 270px;
         }
 
         .info-box:hover {
@@ -102,7 +103,7 @@
         .portfolio-box {
             position: relative;
             aspect-ratio: 1;
-            min-width: 300px;
+            min-width: 270px;
         }
 
         .portfolio-box-inner {
@@ -197,7 +198,7 @@
             }
 
             .grid {
-                grid-template-columns: repeat(auto-fit, minmax(300px, 370px));
+                grid-template-columns: repeat(auto-fit, 270px);
                 gap: 1.5rem;
             }
 
@@ -207,6 +208,26 @@
 
             .info-box .subtitle {
                 font-size: 0.875rem;
+            }
+        }
+
+        /* Single column: fill width */
+        @media (max-width: 640px) {
+            .grid {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .info-box,
+            .portfolio-box {
+                min-width: unset;
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .portfolio-box-inner {
+                width: 100%;
             }
         }
     </style>
@@ -267,6 +288,64 @@
                 img.src = staticSrc;
             });
         });
+
+        // Dynamic column calculation based on viewport dimensions
+        function updateGridColumns() {
+            const grid = document.querySelector('.grid');
+            const container = document.querySelector('.container');
+
+            // Get viewport dimensions
+            const viewportHeight = window.innerHeight;
+            const viewportWidth = window.innerWidth;
+
+            // Calculate container padding (4rem top + 4rem bottom = 8rem)
+            const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+            const verticalPadding = 8 * remSize;
+
+            // Available height for grid
+            const availableHeight = viewportHeight - verticalPadding;
+
+            // Item dimensions (aspect-ratio: 1, plus gap)
+            const gap = 2.5 * remSize;
+            const itemSize = 270; // Use 270px for calculations to fit more rows
+
+            // Calculate how many rows can fit in viewport
+            const maxRows = Math.max(1, Math.floor((availableHeight + gap) / (itemSize + gap)));
+
+            // Count total items (including info box)
+            const totalItems = grid.children.length;
+
+            // Calculate minimum columns needed to fit all items in maxRows
+            const minColumnsForHeight = Math.ceil(totalItems / maxRows);
+
+            // Calculate maximum columns that fit in viewport width
+            const containerPadding = 4 * remSize; // 2rem on each side
+            const availableWidth = Math.min(viewportWidth - containerPadding, 1600); // respect max-width
+            const maxColumnsForWidth = Math.max(1, Math.floor((availableWidth + gap) / (itemSize + gap)));
+
+            // Use the minimum of the two - we need at least minColumnsForHeight, but can't exceed maxColumnsForWidth
+            // If we need more columns than fit, we'll have to accept some vertical scrolling
+            const optimalColumns = Math.min(minColumnsForHeight, maxColumnsForWidth);
+
+            // Apply the column count
+            grid.style.gridTemplateColumns = `repeat(${optimalColumns}, 270px)`;
+        }
+
+        // Run on load and resize
+        updateGridColumns();
+        window.addEventListener('resize', updateGridColumns);
+
+        // Mobile GIF autoplay
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+
+        if (isMobile) {
+            // On mobile, show animated GIFs by default
+            document.querySelectorAll('.portfolio-box[data-animated]').forEach(box => {
+                const img = box.querySelector('img');
+                const animatedSrc = box.getAttribute('data-animated');
+                img.src = animatedSrc;
+            });
+        }
     </script>
 </body>
 </html>
