@@ -224,6 +224,17 @@ async function copyAssets() {
   } catch (err) {
     // images directory might not exist
   }
+
+  // Copy CV PDF from content/ to dist/
+  const cvSrc = path.join(__dirname, 'content', 'Curriculum_Vitae.pdf');
+  const cvDest = path.join(distDir, 'Curriculum_Vitae.pdf');
+
+  try {
+    await fs.copyFile(cvSrc, cvDest);
+    console.log('Copied Curriculum_Vitae.pdf');
+  } catch (err) {
+    // CV file might not exist
+  }
 }
 
 async function copyProjectAssets(referencedImages) {
